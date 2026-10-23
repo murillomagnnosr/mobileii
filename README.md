@@ -1,4 +1,4 @@
-# carteira_digital
+# Carteira Digital
 
 App Flutter da Carteira Digital. Cenas de **Login** e **Home** falando com a
 API Carteira (`docs/api-referencia.pdf`, servidor mock do curso em `server/`).
