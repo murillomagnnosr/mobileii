@@ -1,7 +1,7 @@
-import 'package:carteira_core/carteira_core.dart';
 import 'package:carteira_design_system/carteira_design_system.dart';
 import 'package:flutter/material.dart';
 
+import '../shared/transaction_display.dart';
 import 'home_view_model.dart';
 
 class HomeView extends StatefulWidget {
@@ -35,6 +35,23 @@ class _HomeViewState extends State<HomeView> {
       // Lista sem recuo (full-bleed), como na galeria do design system;
       // o recuo da tela é aplicado só ao cabeçalho e ao card.
       padded: false,
+      actions: [
+        ListenableBuilder(
+          listenable: viewModel,
+          builder: (context, _) => IconButton(
+            key: const Key('home_profile'),
+            tooltip: 'Perfil',
+            icon: AppAvatar(name: viewModel.userName, size: 32),
+            onPressed: viewModel.openProfile,
+          ),
+        ),
+      ],
+      floatingActionButton: FloatingActionButton(
+        key: const Key('home_new'),
+        tooltip: 'Novo lançamento',
+        onPressed: viewModel.newTransaction,
+        child: const Icon(Icons.add),
+      ),
       body: ListenableBuilder(
         listenable: viewModel,
         builder: (context, _) {
@@ -83,7 +100,11 @@ class _HomeContent extends StatelessWidget {
                 monthLabel: viewModel.monthText,
               ),
               // SectionHeader já traz o próprio espaçamento vertical.
-              const SectionHeader(title: 'Últimos lançamentos'),
+              SectionHeader(
+                title: 'Últimos lançamentos',
+                actionLabel: 'Ver todos',
+                onAction: viewModel.openStatement,
+              ),
             ],
           ),
         ),
@@ -95,21 +116,17 @@ class _HomeContent extends StatelessWidget {
           for (final transaction in viewModel.recent)
             // O tile põe o sinal conforme o tipo; o valor vai sem sinal.
             TransactionTile(
-              kind: _kindOf(transaction),
+              kind: transaction.kind,
               title: transaction.description,
               amount: viewModel.amountOf(transaction),
               subtitle: viewModel.subtitleOf(transaction),
+              onTap: () => viewModel.openTransaction(transaction),
             ),
+        // Espaço para o FAB não cobrir o último item.
+        const SizedBox(height: 88),
       ],
     );
   }
-
-  static TransactionKind _kindOf(Transaction transaction) =>
-      switch (transaction) {
-        Income() => TransactionKind.income,
-        Expense() => TransactionKind.expense,
-        Transfer() => TransactionKind.transfer,
-      };
 }
 
 /// Recuo horizontal padrão da tela, para o que não é lista.

@@ -1,6 +1,7 @@
 import 'package:carteira_core/carteira_core.dart';
 import 'package:flutter/foundation.dart' hide Summary;
 
+import '../shared/transaction_display.dart';
 import 'home_coordinator.dart';
 
 /// Estado e ações da home.
@@ -51,15 +52,30 @@ class HomeViewModel extends ChangeNotifier {
     return label[0].toUpperCase() + label.substring(1);
   }
 
+  /// Inicial do avatar no app bar.
+  String get userName => _user?.name ?? '';
+
   /// Valor sem sinal: o tile põe o sinal conforme o tipo do lançamento.
   String amountOf(Transaction transaction) => _money.format(transaction.amount);
 
   /// "06/09 · Nubank".
-  String subtitleOf(Transaction transaction) {
-    final local = transaction.date.toLocal();
-    final day = local.day.toString().padLeft(2, '0');
-    final month = local.month.toString().padLeft(2, '0');
-    return '$day/$month · ${transaction.account}';
+  String subtitleOf(Transaction transaction) => transaction.subtitle;
+
+  Future<void> openStatement() => _openAndReload(_coordinator.showStatement);
+
+  Future<void> openTransaction(Transaction transaction) =>
+      _openAndReload(() => _coordinator.showTransaction(transaction.id));
+
+  Future<void> newTransaction() =>
+      _openAndReload(_coordinator.showNewTransaction);
+
+  Future<void> openProfile() => _openAndReload(_coordinator.showProfile);
+
+  /// A cena aberta pode ter criado, editado ou excluído lançamentos, ou
+  /// trocado o nome: ao voltar, a home recarrega.
+  Future<void> _openAndReload(Future<void> Function() open) async {
+    await open();
+    await load();
   }
 
   Future<void> load() async {

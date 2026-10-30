@@ -170,6 +170,26 @@ abstract final class AppTheme {
         ),
       ),
       dividerTheme: DividerThemeData(color: p.outline, space: 1, thickness: 1),
+      chipTheme: ChipThemeData(
+        backgroundColor: p.surface,
+        selectedColor: p.primaryContainer,
+        side: BorderSide(color: p.outline),
+        shape: const RoundedRectangleBorder(borderRadius: AppRadius.pillAll),
+        labelStyle: AppTypography.labelLarge.copyWith(color: p.onSurface),
+        padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm),
+      ),
+      segmentedButtonTheme: SegmentedButtonThemeData(
+        style: SegmentedButton.styleFrom(
+          backgroundColor: p.surface,
+          foregroundColor: p.onSurface,
+          selectedBackgroundColor: p.primaryContainer,
+          selectedForegroundColor: p.onPrimaryContainer,
+          side: BorderSide(color: p.outline),
+          textStyle: AppTypography.labelLarge,
+          minimumSize: const Size(0, 44),
+        ),
+      ),
+      progressIndicatorTheme: ProgressIndicatorThemeData(color: p.primary),
     );
   }
 }

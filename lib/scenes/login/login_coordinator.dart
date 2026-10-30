@@ -1,5 +1,3 @@
-import 'package:flutter/material.dart';
-
 import '../../app/app_services.dart';
 import '../../app/navigation.dart';
 import '../home/home_factory.dart';
@@ -16,12 +14,5 @@ class DefaultLoginCoordinator implements LoginCoordinator {
   final AppServices _services;
 
   @override
-  void onLoginSuccess() {
-    // Montada fora do builder da rota, pelo mesmo motivo do StartupGate.
-    final home = HomeFactory.make(_services);
-    appNavigatorKey.currentState?.pushAndRemoveUntil(
-      MaterialPageRoute<void>(builder: (_) => home),
-      (_) => false,
-    );
-  }
+  void onLoginSuccess() => resetToScene(HomeFactory.make(_services));
 }

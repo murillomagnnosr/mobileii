@@ -2,8 +2,10 @@ import 'package:carteira_design_system/carteira_design_system.dart';
 import 'package:flutter/material.dart';
 
 import 'pages/buttons_page.dart';
+import 'pages/forms_page.dart';
 import 'pages/inputs_page.dart';
 import 'pages/lists_page.dart';
+import 'pages/prototypes_page.dart';
 import 'pages/states_page.dart';
 import 'pages/tokens_page.dart';
 
@@ -41,6 +43,12 @@ class GalleryHome extends StatelessWidget {
     (title: 'Campos', icon: Icons.edit_outlined, page: const InputsPage()),
     (title: 'Listas', icon: Icons.list_alt, page: const ListsPage()),
     (title: 'Estados', icon: Icons.hourglass_empty, page: const StatesPage()),
+    (title: 'Filtros e detalhes', icon: Icons.tune, page: const FormsPage()),
+    (
+      title: 'Protótipos de telas',
+      icon: Icons.phone_android,
+      page: const PrototypesPage(),
+    ),
   ];
 
   @override

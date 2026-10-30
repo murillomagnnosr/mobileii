@@ -43,36 +43,67 @@ class FakeAuth implements AuthRepository {
   Session? get currentSession => null;
 }
 
-/// Lançamentos falsos: resumo e lista configuráveis, o resto não é usado.
+/// Lançamentos falsos: cada operação devolve o resultado configurado e
+/// guarda os argumentos recebidos.
 class FakeTransactions implements TransactionRepository {
-  FakeTransactions({this.summaryResult, this.listResult});
+  FakeTransactions({
+    this.summaryResult,
+    this.listResult,
+    this.pages,
+    this.getResult,
+    this.saveResult,
+    this.deleteResult,
+  });
 
   final Result<Summary>? summaryResult;
   final Result<Page<Transaction>>? listResult;
+
+  /// Quando presente, `list` devolve a página de número `filter.page`.
+  final Map<int, Page<Transaction>>? pages;
+  final Result<Transaction>? getResult;
+
+  /// Usado por `create` e `update`. Sem ele, ecoa o lançamento recebido.
+  final Result<Transaction>? saveResult;
+  final Result<void>? deleteResult;
+
+  final filters = <TransactionFilter>[];
+  Transaction? created;
+  Transaction? updated;
+  String? deletedId;
 
   @override
   Future<Result<Summary>> summary(String month) async =>
       summaryResult ?? Ok(Summary(month: month, income: 0, expense: 0));
 
   @override
-  Future<Result<Page<Transaction>>> list(TransactionFilter filter) async =>
-      listResult ?? const Ok(Page<Transaction>.empty());
+  Future<Result<Page<Transaction>>> list(TransactionFilter filter) async {
+    filters.add(filter);
+    final page = pages?[filter.page];
+    if (page != null) return Ok(page);
+    return listResult ?? const Ok(Page<Transaction>.empty());
+  }
 
   @override
-  Future<Result<Transaction>> getById(String id) =>
-      throw UnimplementedError('não usado nos testes');
+  Future<Result<Transaction>> getById(String id) async =>
+      getResult ?? Failure(NotFoundError(id));
 
   @override
-  Future<Result<Transaction>> create(Transaction transaction) =>
-      throw UnimplementedError('não usado nos testes');
+  Future<Result<Transaction>> create(Transaction transaction) async {
+    created = transaction;
+    return saveResult ?? Ok(transaction.copyWith(id: 'tx_new'));
+  }
 
   @override
-  Future<Result<Transaction>> update(Transaction transaction) =>
-      throw UnimplementedError('não usado nos testes');
+  Future<Result<Transaction>> update(Transaction transaction) async {
+    updated = transaction;
+    return saveResult ?? Ok(transaction);
+  }
 
   @override
-  Future<Result<void>> delete(String id) =>
-      throw UnimplementedError('não usado nos testes');
+  Future<Result<void>> delete(String id) async {
+    deletedId = id;
+    return deleteResult ?? const Ok<void>(null);
+  }
 
   @override
   Stream<List<Transaction>> watch() => const Stream.empty();
@@ -80,9 +111,11 @@ class FakeTransactions implements TransactionRepository {
 
 /// Perfil falso: devolve o usuário de exemplo ou o resultado configurado.
 class FakeUsers implements UserRepository {
-  FakeUsers({this.result});
+  FakeUsers({this.result, this.updateResult});
 
   final Result<User>? result;
+  final Result<User>? updateResult;
+  String? updatedName;
 
   @override
   Future<Result<User>> getProfile() async => result ?? Ok(SampleData.user);
@@ -91,5 +124,8 @@ class FakeUsers implements UserRepository {
   Future<Result<User>> updateProfile({
     required String name,
     String? avatarUrl,
-  }) => throw UnimplementedError('não usado nos testes');
+  }) async {
+    updatedName = name;
+    return updateResult ?? Ok(SampleData.user.copyWith(name: name.trim()));
+  }
 }

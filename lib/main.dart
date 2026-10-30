@@ -16,15 +16,21 @@ class CarteiraApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Carteira Digital',
-      debugShowCheckedModeBanner: false,
-      navigatorKey: appNavigatorKey,
-      theme: AppTheme.light(),
-      darkTheme: AppTheme.dark(),
-      // Tema fixo claro, igual em todas as plataformas (Android, Web, Windows).
-      themeMode: ThemeMode.light,
-      home: StartupGate(services: services),
+    // O tema vem do design system; o modo (claro, escuro, sistema) é
+    // escolhido no perfil e começa no claro.
+    return ValueListenableBuilder<ThemeMode>(
+      valueListenable: services.theme,
+      builder: (context, mode, child) => MaterialApp(
+        title: 'Carteira Digital',
+        debugShowCheckedModeBanner: false,
+        navigatorKey: appNavigatorKey,
+        theme: AppTheme.light(),
+        darkTheme: AppTheme.dark(),
+        themeMode: mode,
+        home: child,
+      ),
+      // Fora do builder: trocar o tema não recria o StartupGate.
+      child: StartupGate(services: services),
     );
   }
 }

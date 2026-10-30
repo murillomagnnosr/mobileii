@@ -7,9 +7,22 @@ import '../../support/fakes.dart';
 
 class _FakeCoordinator implements HomeCoordinator {
   int expired = 0;
+  final opened = <String>[];
 
   @override
   void onSessionExpired() => expired++;
+
+  @override
+  Future<void> showStatement() async => opened.add('statement');
+
+  @override
+  Future<void> showTransaction(String id) async => opened.add('tx:$id');
+
+  @override
+  Future<void> showNewTransaction() async => opened.add('new');
+
+  @override
+  Future<void> showProfile() async => opened.add('profile');
 }
 
 final _mercado = Expense(
@@ -82,6 +95,29 @@ void main() {
 
     expect(auth.logoutCalls, 1);
     expect(coordinator.expired, 1);
+  });
+
+  test('abrir outra cena recarrega a home ao voltar', () async {
+    final coordinator = _FakeCoordinator();
+    final transactions = FakeTransactions(
+      summaryResult: Ok(_summary),
+      listResult: Ok(_page),
+    );
+    final viewModel = HomeViewModel(
+      auth: FakeAuth(),
+      users: FakeUsers(),
+      transactions: transactions,
+      coordinator: coordinator,
+      clock: () => DateTime(2026, 10, 9),
+    );
+
+    await viewModel.openTransaction(_mercado);
+    await viewModel.newTransaction();
+    await viewModel.openStatement();
+    await viewModel.openProfile();
+
+    expect(coordinator.opened, ['tx:tx_0057', 'new', 'statement', 'profile']);
+    expect(transactions.filters, hasLength(4));
   });
 
   test('servidor fora do ar mostra erro e não encerra a sessão', () async {
