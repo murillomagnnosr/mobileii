@@ -34,50 +34,59 @@ class _TransactionsViewState extends State<TransactionsView> {
     (value: TransactionType.transfer, label: 'Transferências'),
   ];
 
+  /// Recuo do divisor: 16 de padding do tile + 44 do orb + 16 de espaço,
+  /// alinhado ao texto do lançamento.
+  static const _dividerIndent = 76.0;
+
   @override
   Widget build(BuildContext context) {
     final viewModel = widget.viewModel;
 
     return AppScaffold(
       title: 'Extrato',
+      // Sem recuo: os chips rolam de ponta a ponta; o recuo da tela é
+      // aplicado à busca, ao painel e ao botão.
       padded: false,
-      floatingActionButton: FloatingActionButton(
+      floatingActionButton: AppFab(
         key: const Key('transactions_new'),
         tooltip: 'Novo lançamento',
         onPressed: viewModel.newTransaction,
-        child: const Icon(Icons.add),
       ),
       body: ListenableBuilder(
         listenable: viewModel,
         builder: (context, _) => ListView(
+          // Espaço para o FAB não cobrir o último item, mais a barra de gestos.
+          padding: EdgeInsets.only(
+            bottom:
+                AppSpacing.fabClearance + MediaQuery.paddingOf(context).bottom,
+          ),
           children: [
             Padding(
               padding: const EdgeInsets.fromLTRB(
                 AppSpacing.screen,
                 AppSpacing.sm,
                 AppSpacing.screen,
-                AppSpacing.sm,
+                AppSpacing.md,
               ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  AppTextField(
-                    key: const Key('transactions_search'),
-                    label: 'Buscar',
-                    hint: 'Descrição do lançamento',
-                    prefixIcon: Icons.search,
-                    textInputAction: TextInputAction.search,
-                    onSubmitted: viewModel.onQuerySubmitted,
-                  ),
-                  const Gap.md(),
-                  AppChoiceChips<TransactionType?>(
-                    options: _filters,
-                    selected: viewModel.type,
-                    onSelected: viewModel.onTypeChanged,
-                  ),
-                ],
+              child: AppTextField(
+                key: const Key('transactions_search'),
+                label: 'Buscar',
+                hint: 'Descrição do lançamento',
+                prefixIcon: Icons.search_rounded,
+                pill: true,
+                textInputAction: TextInputAction.search,
+                onSubmitted: viewModel.onQuerySubmitted,
               ),
             ),
+            AppChoiceChips<TransactionType?>(
+              options: _filters,
+              selected: viewModel.type,
+              onSelected: viewModel.onTypeChanged,
+              padding: const EdgeInsets.symmetric(
+                horizontal: AppSpacing.screen,
+              ),
+            ),
+            const Gap.lg(),
             ..._content(viewModel),
           ],
         ),
@@ -101,20 +110,39 @@ class _TransactionsViewState extends State<TransactionsView> {
       return [
         StateView.empty(
           message: 'Nenhum lançamento encontrado.',
+          icon: Icons.search_off_rounded,
           actionLabel: 'Adicionar',
           onAction: viewModel.newTransaction,
         ),
       ];
     }
     return [
-      for (final transaction in viewModel.items)
-        TransactionTile(
-          kind: transaction.kind,
-          title: transaction.description,
-          amount: viewModel.amountOf(transaction),
-          subtitle: transaction.subtitle,
-          onTap: () => viewModel.openTransaction(transaction),
+      // Um único painel de vidro com divisores recuados. Quando a ViewModel
+      // expuser grupos por data, vira um SectionHeader + painel por grupo.
+      Padding(
+        padding: const EdgeInsets.symmetric(horizontal: AppSpacing.screen),
+        child: AppPanel(
+          padding: const EdgeInsets.symmetric(vertical: AppSpacing.xs),
+          child: Column(
+            children: [
+              for (final (index, transaction) in viewModel.items.indexed) ...[
+                if (index > 0)
+                  const Divider(
+                    indent: _dividerIndent,
+                    endIndent: AppSpacing.lg,
+                  ),
+                TransactionTile(
+                  kind: transaction.kind,
+                  title: transaction.description,
+                  amount: viewModel.amountOf(transaction),
+                  subtitle: transaction.subtitle,
+                  onTap: () => viewModel.openTransaction(transaction),
+                ),
+              ],
+            ],
+          ),
         ),
+      ),
       if (viewModel.hasMore)
         Padding(
           padding: const EdgeInsets.all(AppSpacing.screen),
@@ -125,8 +153,6 @@ class _TransactionsViewState extends State<TransactionsView> {
             onPressed: viewModel.loadMore,
           ),
         ),
-      // Espaço para o FAB não cobrir o último item.
-      const SizedBox(height: 88),
     ];
   }
 }

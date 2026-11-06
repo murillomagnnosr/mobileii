@@ -45,11 +45,12 @@ class _TransactionDetailViewState extends State<TransactionDetailView> {
       builder: (context, _) => AppScaffold(
         title: 'Lançamento',
         actions: [
+          // Ganha o estilo de botão redondo do AppScaffold automaticamente.
           if (viewModel.transaction != null)
             IconButton(
               key: const Key('detail_edit'),
               tooltip: 'Editar',
-              icon: const Icon(Icons.edit_outlined),
+              icon: const Icon(Icons.edit_rounded),
               onPressed: viewModel.edit,
             ),
         ],
@@ -67,70 +68,140 @@ class _TransactionDetailViewState extends State<TransactionDetailView> {
       );
     }
 
-    final theme = Theme.of(context);
-    final tone = switch (viewModel.kind) {
-      TransactionKind.income => MoneyTone.income,
-      TransactionKind.expense => MoneyTone.expense,
-      TransactionKind.transfer => MoneyTone.neutral,
-    };
     return ListView(
       children: [
-        const Gap.xl(),
-        Text(viewModel.title, style: theme.textTheme.titleMedium),
-        const Gap.xs(),
-        MoneyText(
-          viewModel.amountText,
-          tone: tone,
-          size: MoneySize.display,
-          signed: true,
-        ),
+        const Gap.sm(),
+        _Header(viewModel: viewModel),
         const Gap.lg(),
-        const Divider(),
-        DetailRow(
-          label: 'Tipo',
-          value: viewModel.typeText,
-          icon: Icons.category_outlined,
-        ),
-        DetailRow(
-          label: 'Data',
-          value: viewModel.dateText,
-          icon: Icons.event_outlined,
-        ),
-        DetailRow(
-          label: 'Conta',
-          value: viewModel.accountText,
-          icon: Icons.account_balance_wallet_outlined,
-        ),
-        DetailRow(
-          label: 'Categoria',
-          value: viewModel.categoryText,
-          icon: Icons.sell_outlined,
-        ),
-        if (viewModel.noteText != null)
-          DetailRow(
-            label: 'Observação',
-            value: viewModel.noteText!,
-            icon: Icons.notes_outlined,
-          ),
+        _Details(viewModel: viewModel),
         if (viewModel.actionError != null) ...[
           const Gap.md(),
-          Text(
-            viewModel.actionError!,
-            style: theme.textTheme.bodyMedium?.copyWith(
-              color: theme.colorScheme.error,
-            ),
-          ),
+          AppErrorBanner(viewModel.actionError!),
         ],
         const Gap.xl(),
         AppButton.secondary(
           key: const Key('detail_delete'),
           label: 'Excluir lançamento',
-          icon: Icons.delete_outline,
+          icon: Icons.delete_outline_rounded,
+          destructive: true,
           isLoading: viewModel.isDeleting,
           onPressed: _confirmDelete,
         ),
         const Gap.xl(),
       ],
+    );
+  }
+}
+
+/// Painel de destaque com o brilho da cor do tipo: orb, pílula do tipo,
+/// descrição e valor em tamanho display.
+class _Header extends StatelessWidget {
+  const _Header({required this.viewModel});
+
+  final TransactionDetailViewModel viewModel;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final kindStyle = kindStyleOf(context, viewModel.kind);
+
+    return AppPanel(
+      radius: AppRadius.xl,
+      padding: const EdgeInsets.all(AppSpacing.hero),
+      glow: kindStyle.color,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              KindOrb(kind: viewModel.kind, size: 52),
+              const Gap.md(),
+              // A pílula mostra o tipo, por isso não há mais a linha "Tipo".
+              Flexible(
+                child: DecoratedBox(
+                  decoration: ShapeDecoration(
+                    color: kindStyle.container,
+                    shape: const StadiumBorder(),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: AppSpacing.md,
+                      vertical: 6,
+                    ),
+                    child: Text(
+                      viewModel.typeText,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: theme.textTheme.labelMedium?.copyWith(
+                        color: kindStyle.color,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const Gap.lg(),
+          Text(viewModel.title, style: theme.textTheme.titleMedium),
+          const Gap.xs(),
+          // "R$" em meio tamanho; o valor encolhe em vez de ser cortado.
+          MoneyText(
+            viewModel.amountText,
+            tone: kindStyle.tone,
+            size: MoneySize.display,
+            signed: true,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// Data, conta, categoria e observação num painel de vidro.
+class _Details extends StatelessWidget {
+  const _Details({required this.viewModel});
+
+  final TransactionDetailViewModel viewModel;
+
+  /// Alinha o divisor ao texto: 36 do ícone + 12 de espaço.
+  static const _dividerIndent = 48.0;
+
+  @override
+  Widget build(BuildContext context) {
+    return AppPanel(
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppSpacing.lg,
+        vertical: AppSpacing.xs,
+      ),
+      child: Column(
+        children: [
+          DetailRow(
+            label: 'Data',
+            value: viewModel.dateText,
+            icon: Icons.event_outlined,
+          ),
+          const Divider(indent: _dividerIndent),
+          DetailRow(
+            label: 'Conta',
+            value: viewModel.accountText,
+            icon: Icons.account_balance_wallet_outlined,
+          ),
+          const Divider(indent: _dividerIndent),
+          DetailRow(
+            label: 'Categoria',
+            value: viewModel.categoryText,
+            icon: Icons.sell_outlined,
+          ),
+          if (viewModel.noteText != null) ...[
+            const Divider(indent: _dividerIndent),
+            DetailRow(
+              label: 'Observação',
+              value: viewModel.noteText!,
+              icon: Icons.notes_rounded,
+            ),
+          ],
+        ],
+      ),
     );
   }
 }

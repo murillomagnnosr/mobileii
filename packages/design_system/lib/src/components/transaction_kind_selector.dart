@@ -1,8 +1,15 @@
 import 'package:flutter/material.dart';
 
+import '../theme/app_semantic_colors.dart';
+import 'kind_style.dart';
 import 'transaction_tile.dart';
 
 /// Segmented control to pick income, expense or transfer in a form.
+///
+/// The selected segment is a SOLID fill in the kind color with an `onKind`
+/// label, so it stands out from the page (WCAG 1.4.11). Everything else
+/// (transparent rest, muted label, outline, pill shape, 52 tall) comes from
+/// the theme's segmented button theme.
 class TransactionKindSelector extends StatelessWidget {
   const TransactionKindSelector({
     required this.selected,
@@ -17,26 +24,29 @@ class TransactionKindSelector extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final k = kindStyleOf(context, selected);
+
+    ButtonSegment<TransactionKind> segment(TransactionKind kind, String label) {
+      return ButtonSegment(
+        value: kind,
+        label: Text(label),
+        // Arrows from the single kind mapping: up is money leaving.
+        icon: Icon(kindStyleOf(context, kind).icon),
+      );
+    }
+
     return SizedBox(
       width: double.infinity,
       child: SegmentedButton<TransactionKind>(
         showSelectedIcon: false,
-        segments: const [
-          ButtonSegment(
-            value: TransactionKind.expense,
-            label: Text('Saída'),
-            icon: Icon(Icons.arrow_upward_rounded),
-          ),
-          ButtonSegment(
-            value: TransactionKind.income,
-            label: Text('Entrada'),
-            icon: Icon(Icons.arrow_downward_rounded),
-          ),
-          ButtonSegment(
-            value: TransactionKind.transfer,
-            label: Text('Transf.'),
-            icon: Icon(Icons.swap_horiz_rounded),
-          ),
+        style: SegmentedButton.styleFrom(
+          selectedBackgroundColor: k.color,
+          selectedForegroundColor: context.semanticColors.onKind,
+        ),
+        segments: [
+          segment(TransactionKind.expense, 'Saída'),
+          segment(TransactionKind.income, 'Entrada'),
+          segment(TransactionKind.transfer, 'Transf.'),
         ],
         selected: {selected},
         onSelectionChanged: enabled ? (set) => onChanged(set.first) : null,

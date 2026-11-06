@@ -32,8 +32,9 @@ class _HomeViewState extends State<HomeView> {
 
     return AppScaffold(
       title: 'Carteira',
-      // Lista sem recuo (full-bleed), como na galeria do design system;
-      // o recuo da tela é aplicado só ao cabeçalho e ao card.
+      // Logo de 28px antes do título.
+      brand: true,
+      // A lista aplica o próprio recuo, para as cápsulas e o espaço do FAB.
       padded: false,
       actions: [
         ListenableBuilder(
@@ -41,16 +42,27 @@ class _HomeViewState extends State<HomeView> {
           builder: (context, _) => IconButton(
             key: const Key('home_profile'),
             tooltip: 'Perfil',
-            icon: AppAvatar(name: viewModel.userName, size: 32),
+            // O avatar não é botão de chrome: sem fundo nem borda.
+            style: IconButton.styleFrom(
+              backgroundColor: Colors.transparent,
+              side: BorderSide.none,
+              padding: EdgeInsets.zero,
+              fixedSize: const Size.square(44),
+            ),
+            // Mesma tag do ProfileHeader: o avatar voa até o Perfil.
+            icon: AppAvatar(
+              name: viewModel.userName,
+              size: 36,
+              heroTag: 'profile-avatar',
+            ),
             onPressed: viewModel.openProfile,
           ),
         ),
       ],
-      floatingActionButton: FloatingActionButton(
+      floatingActionButton: AppFab(
         key: const Key('home_new'),
         tooltip: 'Novo lançamento',
         onPressed: viewModel.newTransaction,
-        child: const Icon(Icons.add),
       ),
       body: ListenableBuilder(
         listenable: viewModel,
@@ -85,51 +97,54 @@ class _HomeContent extends StatelessWidget {
     final theme = Theme.of(context);
 
     return ListView(
+      // Embaixo, espaço para o FAB não cobrir o último item; a lista passa
+      // por trás da barra de gestos, então soma também essa área.
+      padding: EdgeInsets.fromLTRB(
+        AppSpacing.screen,
+        AppSpacing.sm,
+        AppSpacing.screen,
+        AppSpacing.fabClearance + MediaQuery.paddingOf(context).bottom,
+      ),
       children: [
-        _Inset(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              const Gap.md(),
-              Text(viewModel.greeting, style: theme.textTheme.titleLarge),
-              const Gap.md(),
-              BalanceCard(
-                balance: viewModel.balanceText,
-                income: viewModel.incomeText,
-                expense: viewModel.expenseText,
-                monthLabel: viewModel.monthText,
-              ),
-              // SectionHeader já traz o próprio espaçamento vertical.
-              SectionHeader(
-                title: 'Últimos lançamentos',
-                actionLabel: 'Ver todos',
-                onAction: viewModel.openStatement,
-              ),
-            ],
-          ),
+        Text(viewModel.greeting, style: theme.textTheme.titleLarge),
+        const Gap.lg(),
+        BalanceCard(
+          balance: viewModel.balanceText,
+          income: viewModel.incomeText,
+          expense: viewModel.expenseText,
+          monthLabel: viewModel.monthText,
+        ),
+        // SectionHeader já traz o próprio espaçamento vertical.
+        SectionHeader(
+          title: 'Últimos lançamentos',
+          actionLabel: 'Ver todos',
+          onAction: viewModel.openStatement,
         ),
         if (viewModel.recent.isEmpty)
-          const _Inset(
+          const AppPanel(
             child: StateView.empty(message: 'Nenhum lançamento neste mês.'),
           )
         else
-          for (final transaction in viewModel.recent)
-            // O tile põe o sinal conforme o tipo; o valor vai sem sinal.
+          for (final (index, transaction) in viewModel.recent.indexed) ...[
+            if (index > 0) const Gap.sm(),
+            // Cápsulas flutuantes que entram em sequência. O tile põe o
+            // sinal conforme o tipo; o valor vai sem sinal.
             TransactionTile(
+              capsule: true,
+              entranceIndex: index,
               kind: transaction.kind,
               title: transaction.description,
               amount: viewModel.amountOf(transaction),
               subtitle: viewModel.subtitleOf(transaction),
               onTap: () => viewModel.openTransaction(transaction),
             ),
-        // Espaço para o FAB não cobrir o último item.
-        const SizedBox(height: 88),
+          ],
       ],
     );
   }
 }
 
-/// Recuo horizontal padrão da tela, para o que não é lista.
+/// Recuo horizontal padrão da tela, para os estados de carga e erro.
 class _Inset extends StatelessWidget {
   const _Inset({required this.child});
 

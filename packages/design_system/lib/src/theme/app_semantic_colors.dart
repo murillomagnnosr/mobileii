@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 import '../tokens/app_colors.dart';
 
 /// Colors that carry meaning in a finance app and have no slot in
-/// [ColorScheme]: income, expense, transfer and warning.
+/// [ColorScheme]: income, expense, transfer and warning, plus the solid kind
+/// containers and the label color on a solid kind fill.
 ///
 /// Registered as a [ThemeExtension] so widgets read them with
 /// `context.semanticColors`.
@@ -14,6 +15,10 @@ class AppSemanticColors extends ThemeExtension<AppSemanticColors> {
     required this.transfer,
     required this.warning,
     required this.muted,
+    required this.incomeContainer,
+    required this.expenseContainer,
+    required this.transferContainer,
+    required this.onKind,
   });
 
   factory AppSemanticColors.fromPalette(AppColorPalette palette) {
@@ -23,6 +28,10 @@ class AppSemanticColors extends ThemeExtension<AppSemanticColors> {
       transfer: palette.transfer,
       warning: palette.warning,
       muted: palette.onSurfaceMuted,
+      incomeContainer: palette.incomeContainer,
+      expenseContainer: palette.expenseContainer,
+      transferContainer: palette.transferContainer,
+      onKind: palette.onKind,
     );
   }
 
@@ -34,6 +43,18 @@ class AppSemanticColors extends ThemeExtension<AppSemanticColors> {
   /// Secondary text color.
   final Color muted;
 
+  /// Solid income tint (KindOrb, hero leg circle, kind pill).
+  final Color incomeContainer;
+
+  /// Solid expense tint (KindOrb, error banner, destructive dialog icon).
+  final Color expenseContainer;
+
+  /// Solid transfer tint (KindOrb, kind pill).
+  final Color transferContainer;
+
+  /// Label and icon on a SOLID kind fill (selected kind segment).
+  final Color onKind;
+
   @override
   AppSemanticColors copyWith({
     Color? income,
@@ -41,6 +62,10 @@ class AppSemanticColors extends ThemeExtension<AppSemanticColors> {
     Color? transfer,
     Color? warning,
     Color? muted,
+    Color? incomeContainer,
+    Color? expenseContainer,
+    Color? transferContainer,
+    Color? onKind,
   }) {
     return AppSemanticColors(
       income: income ?? this.income,
@@ -48,6 +73,10 @@ class AppSemanticColors extends ThemeExtension<AppSemanticColors> {
       transfer: transfer ?? this.transfer,
       warning: warning ?? this.warning,
       muted: muted ?? this.muted,
+      incomeContainer: incomeContainer ?? this.incomeContainer,
+      expenseContainer: expenseContainer ?? this.expenseContainer,
+      transferContainer: transferContainer ?? this.transferContainer,
+      onKind: onKind ?? this.onKind,
     );
   }
 
@@ -60,6 +89,18 @@ class AppSemanticColors extends ThemeExtension<AppSemanticColors> {
       transfer: Color.lerp(transfer, other.transfer, t)!,
       warning: Color.lerp(warning, other.warning, t)!,
       muted: Color.lerp(muted, other.muted, t)!,
+      incomeContainer: Color.lerp(incomeContainer, other.incomeContainer, t)!,
+      expenseContainer: Color.lerp(
+        expenseContainer,
+        other.expenseContainer,
+        t,
+      )!,
+      transferContainer: Color.lerp(
+        transferContainer,
+        other.transferContainer,
+        t,
+      )!,
+      onKind: Color.lerp(onKind, other.onKind, t)!,
     );
   }
 }

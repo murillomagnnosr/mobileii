@@ -1,4 +1,5 @@
 import 'package:carteira_core/carteira_core.dart';
+import 'package:flutter/material.dart' show ThemeMode;
 
 import 'api_config.dart';
 import 'session_store.dart';
@@ -16,6 +17,7 @@ class AppServices {
   }) : theme = theme ?? ThemeController();
 
   /// Monta os repositórios remotos, falando com a API configurada em [ApiConfig].
+  /// O app começa no tema escuro.
   factory AppServices.remote() {
     final client = ApiClient(baseUrl: ApiConfig.baseUrl);
     final storage = SharedPrefsSessionStorage();
@@ -23,6 +25,7 @@ class AppServices {
       auth: RemoteAuthRepository(client: client, storage: storage),
       users: RemoteUserRepository(client: client),
       transactions: RemoteTransactionRepository(client: client),
+      theme: ThemeController(ThemeMode.dark),
     );
   }
 

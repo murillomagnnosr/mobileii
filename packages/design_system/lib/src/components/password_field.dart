@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 
 import '../theme/app_semantic_colors.dart';
+import '../tokens/app_durations.dart';
+import '../tokens/app_motion.dart';
 import '../tokens/app_radius.dart';
-import '../tokens/app_spacing.dart';
+import '../tokens/app_typography.dart';
 import 'app_text_field.dart';
+import 'gap.dart';
 
 /// Password strength as computed by [PasswordField.strengthOf].
 enum PasswordStrength { empty, weak, fair, strong }
@@ -97,6 +100,7 @@ class _PasswordFieldState extends State<PasswordField> {
 
   @override
   Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
     final field = AppTextField(
       label: widget.label,
       controller: _controller,
@@ -109,11 +113,21 @@ class _PasswordFieldState extends State<PasswordField> {
       focusNode: widget.focusNode,
       onChanged: widget.onChanged,
       onSubmitted: widget.onSubmitted,
-      prefixIcon: Icons.lock_outline,
+      prefixIcon: Icons.lock_outline_rounded,
       suffix: IconButton(
         key: const Key('password_toggle'),
         tooltip: _obscure ? 'Mostrar senha' : 'Ocultar senha',
-        icon: Icon(_obscure ? Icons.visibility_outlined : Icons.visibility_off),
+        icon: AnimatedSwitcher(
+          duration: AppMotion.of(context, AppDurations.fast),
+          transitionBuilder: (child, animation) =>
+              ScaleTransition(scale: animation, child: child),
+          child: Icon(
+            _obscure ? Icons.visibility_outlined : Icons.visibility_off_rounded,
+            key: ValueKey(_obscure),
+            // Primary while the password is visible, as a reminder.
+            color: _obscure ? scheme.onSurfaceVariant : scheme.primary,
+          ),
+        ),
         onPressed: () => setState(() => _obscure = !_obscure),
       ),
     );
@@ -124,7 +138,7 @@ class _PasswordFieldState extends State<PasswordField> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         field,
-        const SizedBox(height: AppSpacing.sm),
+        const Gap.sm(),
         _StrengthBar(strength: PasswordField.strengthOf(_controller.text)),
       ],
     );
@@ -153,21 +167,31 @@ class _StrengthBar extends StatelessWidget {
           Expanded(
             child: ClipRRect(
               borderRadius: AppRadius.pillAll,
-              child: LinearProgressIndicator(
-                value: fill,
-                minHeight: 4,
-                color: color,
-                backgroundColor: scheme.surfaceContainerHighest,
+              // End-only tween: the first build starts at the value, later
+              // changes glide. The label below switches immediately.
+              child: TweenAnimationBuilder<double>(
+                tween: Tween<double>(end: fill),
+                duration: AppMotion.of(context, AppDurations.normal),
+                curve: AppCurves.standard,
+                builder: (context, value, _) => LinearProgressIndicator(
+                  value: value,
+                  minHeight: 6,
+                  color: color,
+                  // surfaceContainerHighest is the palette's surfaceVariant.
+                  backgroundColor: scheme.surfaceContainerHighest,
+                ),
               ),
             ),
           ),
-          const SizedBox(width: AppSpacing.sm),
+          const Gap.sm(),
           SizedBox(
-            width: 64,
+            width: 72,
             child: Text(
               label,
-              style: Theme.of(context).textTheme.bodySmall
-                  ?.copyWith(color: color),
+              style: AppTypography.weighted(
+                AppTypography.bodySmall,
+                700,
+              ).copyWith(color: color),
             ),
           ),
         ],

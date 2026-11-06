@@ -65,19 +65,24 @@ class _TransactionFormViewState extends State<TransactionFormView> {
         title: viewModel.title,
         body: ListView(
           children: [
-            const Gap.md(),
+            const Gap.sm(),
             TransactionKindSelector(
               selected: viewModel.type.kind,
               enabled: !viewModel.isSaving,
               onChanged: (kind) => viewModel.onTypeChanged(kind.type),
             ),
-            const Gap.lg(),
+            const Gap(20),
+            // O valor é o foco do formulário: Space Grotesk 28 com dígitos
+            // tabulares e "R$" fixo no lugar do ícone de dólar.
             AppTextField(
               key: const Key('form_amount'),
               label: 'Valor',
               hint: '0,00',
               controller: _amount,
-              prefixIcon: Icons.attach_money,
+              prefixText: r'R$ ',
+              style: AppTypography.moneyInput.copyWith(
+                color: theme.colorScheme.onSurface,
+              ),
               keyboardType: const TextInputType.numberWithOptions(
                 decimal: true,
               ),
@@ -90,7 +95,7 @@ class _TransactionFormViewState extends State<TransactionFormView> {
               key: const Key('form_description'),
               label: 'Descrição',
               controller: _description,
-              prefixIcon: Icons.short_text,
+              prefixIcon: Icons.short_text_rounded,
               textCapitalization: TextCapitalization.sentences,
               textInputAction: TextInputAction.next,
               errorText: viewModel.errorOf('description'),
@@ -117,7 +122,7 @@ class _TransactionFormViewState extends State<TransactionFormView> {
                 label: 'Conta de destino',
                 hint: 'Itaú',
                 controller: _toAccount,
-                prefixIcon: Icons.call_made,
+                prefixIcon: Icons.call_made_rounded,
                 textCapitalization: TextCapitalization.words,
                 errorText: viewModel.errorOf('toAccount'),
                 onChanged: viewModel.onToAccountChanged,
@@ -133,16 +138,20 @@ class _TransactionFormViewState extends State<TransactionFormView> {
                 onChanged: viewModel.onCategoryChanged,
               ),
             const Gap.md(),
+            // Bordas, preenchimento e cores vêm do tema, como nos campos.
             InkWell(
               onTap: viewModel.isSaving ? null : _pickDate,
               borderRadius: AppRadius.mdAll,
               child: InputDecorator(
                 decoration: InputDecoration(
                   labelText: 'Data',
-                  prefixIcon: const Icon(Icons.event_outlined),
+                  prefixIcon: const Icon(Icons.event_outlined, size: 22),
                   errorText: viewModel.errorOf('date'),
                 ),
-                child: Text(viewModel.dateText),
+                child: Text(
+                  viewModel.dateText,
+                  style: theme.textTheme.bodyLarge,
+                ),
               ),
             ),
             const Gap.md(),
@@ -150,22 +159,19 @@ class _TransactionFormViewState extends State<TransactionFormView> {
               key: const Key('form_note'),
               label: 'Observação (opcional)',
               controller: _note,
-              prefixIcon: Icons.notes_outlined,
+              prefixIcon: Icons.notes_rounded,
               maxLines: 3,
               textCapitalization: TextCapitalization.sentences,
               onChanged: viewModel.onNoteChanged,
             ),
             if (viewModel.errorMessage != null) ...[
               const Gap.md(),
-              Text(
+              AppErrorBanner(
                 viewModel.errorMessage!,
-                key: const Key('form_error'),
-                style: theme.textTheme.bodyMedium?.copyWith(
-                  color: theme.colorScheme.error,
-                ),
+                textKey: const Key('form_error'),
               ),
             ],
-            const Gap.xl(),
+            const Gap(28),
             AppButton(
               key: const Key('form_submit'),
               label: 'Salvar',

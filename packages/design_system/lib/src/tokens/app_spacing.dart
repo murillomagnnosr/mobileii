@@ -10,5 +10,14 @@ abstract final class AppSpacing {
   static const double xxxl = 48;
 
   /// Default horizontal padding of screens.
-  static const double screen = lg;
+  static const double screen = 20;
+
+  /// Default inner padding of an AppPanel.
+  static const double panel = 20;
+
+  /// Inner padding of the BalanceCard and the Detalhe header.
+  static const double hero = 24;
+
+  /// Bottom spacer under lists that sit below a FAB.
+  static const double fabClearance = 104;
 }

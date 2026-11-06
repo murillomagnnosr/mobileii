@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 
 import '../theme/app_semantic_colors.dart';
+import '../tokens/app_durations.dart';
+import '../tokens/app_motion.dart';
 import '../tokens/app_radius.dart';
-import '../tokens/app_spacing.dart';
 import '../tokens/app_typography.dart';
+import 'gap.dart';
 
 /// One row of a "by category" summary: label, amount, percentage and a bar
 /// proportional to [share].
@@ -29,13 +31,14 @@ class CategoryBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final text = theme.textTheme;
     final muted = context.semanticColors.muted;
     final fraction = share.clamp(0.0, 1.0).toDouble();
     final percent = '${(fraction * 100).round()}%';
     return Semantics(
       label: '$label, $amount, $percent',
       child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm),
+        padding: const EdgeInsets.symmetric(vertical: 10),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
@@ -46,38 +49,56 @@ class CategoryBar extends StatelessWidget {
                     label,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: theme.textTheme.bodyMedium,
+                    style: AppTypography.weighted(text.bodyMedium!, 600),
                   ),
                 ),
-                const SizedBox(width: AppSpacing.md),
+                const Gap.md(),
                 Text(
                   amount,
-                  style: theme.textTheme.bodyMedium?.copyWith(
-                    fontFeatures: AppTypography.tabularFigures,
-                  ),
+                  style: AppTypography.weighted(
+                    text.bodyMedium!,
+                    700,
+                  ).copyWith(fontFeatures: AppTypography.tabularFigures),
                 ),
-                const SizedBox(width: AppSpacing.md),
+                const Gap.md(),
                 SizedBox(
-                  width: 40,
+                  width: 44,
                   child: Text(
                     percent,
                     textAlign: TextAlign.end,
-                    style: theme.textTheme.bodySmall?.copyWith(color: muted),
+                    style: text.bodySmall!.copyWith(
+                      color: muted,
+                      fontFeatures: AppTypography.tabularFigures,
+                    ),
                   ),
                 ),
               ],
             ),
-            const SizedBox(height: AppSpacing.xs),
+            const Gap(6),
             ClipRRect(
               borderRadius: AppRadius.pillAll,
               child: SizedBox(
-                height: 6,
+                height: 8,
                 child: ColoredBox(
                   color: theme.colorScheme.surfaceContainerHighest,
+                  // widthFactor is the final share from the first frame;
+                  // the grow-in is a horizontal scale inside it. Never
+                  // animate widthFactor itself.
                   child: FractionallySizedBox(
                     alignment: Alignment.centerLeft,
                     widthFactor: fraction,
-                    child: ColoredBox(color: theme.colorScheme.primary),
+                    child: TweenAnimationBuilder<double>(
+                      tween: Tween<double>(begin: 0, end: 1),
+                      duration: AppMotion.of(context, AppDurations.emphasized),
+                      curve: AppCurves.standard,
+                      // Solid primary: no gradient, no glow.
+                      child: ColoredBox(color: theme.colorScheme.primary),
+                      builder: (context, t, child) => Transform(
+                        alignment: Alignment.centerLeft,
+                        transform: Matrix4.diagonal3Values(t, 1, 1),
+                        child: child,
+                      ),
+                    ),
                   ),
                 ),
               ),

@@ -22,6 +22,9 @@ class Gap extends StatelessWidget {
 }
 
 /// Divider with vertical breathing room, for lists and forms.
+///
+/// The line takes its color from the theme's `DividerThemeData`
+/// (`outlineVariant`): a decorative hairline, never a control boundary.
 class EmptyDivider extends StatelessWidget {
   const EmptyDivider({super.key, this.indent = 0});
 

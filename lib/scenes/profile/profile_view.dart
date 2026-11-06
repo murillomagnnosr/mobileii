@@ -38,11 +38,13 @@ class _ProfileViewState extends State<ProfileView> {
   ];
 
   Future<void> _confirmLogout() async {
+    // Sair é reversível: diálogo neutro, com confirmação na cor primária.
     final confirmed = await showConfirmDialog(
       context,
       title: 'Sair da conta?',
       message: 'Você vai precisar entrar de novo.',
       confirmLabel: 'Sair',
+      icon: Icons.logout_rounded,
     );
     if (confirmed) await widget.viewModel.logout();
   }
@@ -66,29 +68,40 @@ class _ProfileViewState extends State<ProfileView> {
           }
           return ListView(
             children: [
+              // Mesma tag do avatar da Home: o avatar "voa" entre as telas.
               ProfileHeader(
                 name: viewModel.name,
                 email: viewModel.email,
                 avatarUrl: viewModel.avatarUrl,
                 caption: viewModel.memberSince,
+                avatarHeroTag: 'profile-avatar',
               ),
-              AppTextField(
-                key: const Key('profile_name'),
-                label: 'Nome',
-                controller: _name,
-                prefixIcon: Icons.person_outline,
-                textCapitalization: TextCapitalization.words,
-                errorText: viewModel.nameError,
-                helperText: viewModel.savedMessage,
-                onChanged: viewModel.onNameChanged,
-                onSubmitted: (_) => viewModel.saveName(),
-              ),
-              const Gap.md(),
-              AppButton(
-                key: const Key('profile_save'),
-                label: 'Salvar nome',
-                isLoading: viewModel.isSaving,
-                onPressed: viewModel.saveName,
+              const SectionHeader(title: 'Dados'),
+              AppPanel(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    AppTextField(
+                      key: const Key('profile_name'),
+                      label: 'Nome',
+                      controller: _name,
+                      prefixIcon: Icons.person_outline_rounded,
+                      textCapitalization: TextCapitalization.words,
+                      errorText: viewModel.nameError,
+                      helperText: viewModel.savedMessage,
+                      onChanged: viewModel.onNameChanged,
+                      onSubmitted: (_) => viewModel.saveName(),
+                    ),
+                    const Gap.md(),
+                    AppButton(
+                      key: const Key('profile_save'),
+                      label: 'Salvar nome',
+                      isLoading: viewModel.isSaving,
+                      onPressed: viewModel.saveName,
+                    ),
+                  ],
+                ),
               ),
               const SectionHeader(title: 'Aparência'),
               AppChoiceChips<ThemeMode>(
@@ -100,11 +113,11 @@ class _ProfileViewState extends State<ProfileView> {
               AppButton.secondary(
                 key: const Key('profile_logout'),
                 label: 'Sair da conta',
-                icon: Icons.logout,
+                icon: Icons.logout_rounded,
                 isLoading: viewModel.isLoggingOut,
                 onPressed: _confirmLogout,
               ),
-              const Gap.sm(),
+              const Gap.lg(),
               Text(
                 'Carteira Digital 1.0',
                 textAlign: TextAlign.center,
