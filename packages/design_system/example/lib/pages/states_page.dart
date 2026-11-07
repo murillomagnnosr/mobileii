@@ -17,6 +17,7 @@ class _StatesPageState extends State<StatesPage> {
   Widget build(BuildContext context) {
     final views = <Widget>[
       const StateView.loading(message: 'Carregando lançamentos…'),
+      // The spark dot: one spot of the screen's spark budget.
       StateView.empty(
         message: 'Nenhum lançamento neste mês',
         actionLabel: 'Adicionar',
@@ -30,21 +31,27 @@ class _StatesPageState extends State<StatesPage> {
     return AppScaffold(
       title: 'Estados',
       actions: const [ThemeModeButton()],
-      body: views[_index],
+      // Each state sits on a glass panel, as in Home and Extrato.
+      body: Center(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.symmetric(vertical: AppSpacing.lg),
+          child: AppPanel(child: views[_index]),
+        ),
+      ),
       bottom: NavigationBar(
         selectedIndex: _index,
         onDestinationSelected: (i) => setState(() => _index = i),
         destinations: const [
           NavigationDestination(
-            icon: Icon(Icons.hourglass_top),
+            icon: Icon(Icons.hourglass_top_rounded),
             label: 'Loading',
           ),
           NavigationDestination(
-            icon: Icon(Icons.inbox_outlined),
+            icon: Icon(Icons.inbox_rounded),
             label: 'Empty',
           ),
           NavigationDestination(
-            icon: Icon(Icons.error_outline),
+            icon: Icon(Icons.error_outline_rounded),
             label: 'Error',
           ),
         ],

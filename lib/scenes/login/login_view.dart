@@ -22,45 +22,83 @@ class _LoginViewState extends State<LoginView> {
   @override
   Widget build(BuildContext context) {
     final viewModel = widget.viewModel;
-    final textTheme = Theme.of(context).textTheme;
+    final theme = Theme.of(context);
+    final muted = theme.colorScheme.onSurfaceVariant;
 
     return AppScaffold(
       showAppBar: false,
+      // Brilho aqua atrás do logo.
+      spotlight: true,
       body: Center(
         child: SingleChildScrollView(
-          child: AutofillGroup(
+          padding: const EdgeInsets.symmetric(vertical: AppSpacing.xl),
+          child: ConstrainedBox(
+            // Em telas largas o formulário não estica.
+            constraints: const BoxConstraints(maxWidth: 440),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                Text('Entrar', style: textTheme.headlineMedium),
-                const Gap.xs(),
+                const Center(child: AppLogoMark(spark: true)),
+                const Gap.xl(),
+                Text('Entrar', style: theme.textTheme.headlineMedium),
+                const Gap(6),
                 Text(
                   'Acesse sua carteira digital',
-                  style: textTheme.bodyMedium,
+                  style: theme.textTheme.bodyLarge?.copyWith(color: muted),
                 ),
                 const Gap.xl(),
-                AppTextField(
-                  key: const Key('login_email'),
-                  label: 'E-mail',
-                  hint: 'voce@exemplo.com',
-                  keyboardType: TextInputType.emailAddress,
-                  textInputAction: TextInputAction.next,
-                  prefixIcon: Icons.mail_outline,
-                  autofillHints: const [AutofillHints.email],
-                  onChanged: viewModel.onEmailChanged,
-                ),
-                const Gap.md(),
-                PasswordField(
-                  key: const Key('login_password'),
-                  textInputAction: TextInputAction.done,
-                  autofillHints: const [AutofillHints.password],
-                  onChanged: viewModel.onPasswordChanged,
+                AppPanel(
+                  radius: AppRadius.xl,
+                  padding: const EdgeInsets.all(AppSpacing.panel),
+                  // Só o formulário depende do estado do view model.
+                  child: ListenableBuilder(
+                    listenable: viewModel,
+                    builder: (context, _) => AutofillGroup(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          AppTextField(
+                            key: const Key('login_email'),
+                            label: 'E-mail',
+                            hint: 'voce@exemplo.com',
+                            keyboardType: TextInputType.emailAddress,
+                            textInputAction: TextInputAction.next,
+                            prefixIcon: Icons.mail_outline_rounded,
+                            autofillHints: const [AutofillHints.email],
+                            onChanged: viewModel.onEmailChanged,
+                          ),
+                          const Gap.md(),
+                          PasswordField(
+                            key: const Key('login_password'),
+                            textInputAction: TextInputAction.done,
+                            autofillHints: const [AutofillHints.password],
+                            onChanged: viewModel.onPasswordChanged,
+                            onSubmitted: (_) => viewModel.submit(),
+                          ),
+                          if (viewModel.errorMessage != null) ...[
+                            const Gap.md(),
+                            AppErrorBanner(
+                              viewModel.errorMessage!,
+                              textKey: const Key('login_error'),
+                            ),
+                          ],
+                          const Gap(20),
+                          AppButton(
+                            key: const Key('login_submit'),
+                            label: 'Entrar',
+                            isLoading: viewModel.isLoading,
+                            onPressed: viewModel.submit,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
                 ),
                 const Gap.xl(),
-                AppButton(
-                  key: const Key('login_submit'),
-                  label: 'Entrar',
-                  onPressed: viewModel.submit,
+                Text(
+                  'Carteira Digital',
+                  textAlign: TextAlign.center,
+                  style: theme.textTheme.bodySmall?.copyWith(color: muted),
                 ),
               ],
             ),

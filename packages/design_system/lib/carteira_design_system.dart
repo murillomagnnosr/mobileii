@@ -1,22 +1,43 @@
-/// Design system of the Carteira app: tokens, theme and components.
+/// Design system of the Carteira app ("Neon noturno+"): tokens, theme and
+/// components.
+///
+/// Give `MaterialApp` `AppTheme.light()` and `AppTheme.dark()`, call
+/// `AppFonts.registerLicenses()` in `main()` and build screens on
+/// `AppScaffold`. Widgets read meaning colors with `context.semanticColors`
+/// and decorative values with `context.effects`. Money and dates arrive
+/// already formatted as `String`.
 library;
 
 export 'src/components/app_avatar.dart';
+export 'src/components/app_backdrop.dart';
 export 'src/components/app_button.dart';
+export 'src/components/app_error_banner.dart';
+export 'src/components/app_fab.dart';
+export 'src/components/app_logo_mark.dart';
+export 'src/components/app_panel.dart';
 export 'src/components/app_scaffold.dart';
 export 'src/components/app_text_field.dart';
 export 'src/components/balance_card.dart';
 export 'src/components/category_bar.dart';
+export 'src/components/choice_chips.dart';
+export 'src/components/confirm_dialog.dart';
+export 'src/components/detail_row.dart';
 export 'src/components/gap.dart';
+export 'src/components/kind_style.dart';
 export 'src/components/money_text.dart';
 export 'src/components/password_field.dart';
+export 'src/components/profile_header.dart';
 export 'src/components/section_header.dart';
 export 'src/components/state_view.dart';
+export 'src/components/transaction_kind_selector.dart';
 export 'src/components/transaction_tile.dart';
+export 'src/theme/app_effects.dart';
 export 'src/theme/app_semantic_colors.dart';
 export 'src/theme/app_theme.dart';
 export 'src/tokens/app_colors.dart';
 export 'src/tokens/app_durations.dart';
+export 'src/tokens/app_fonts.dart';
+export 'src/tokens/app_motion.dart';
 export 'src/tokens/app_radius.dart';
 export 'src/tokens/app_spacing.dart';
 export 'src/tokens/app_typography.dart';
