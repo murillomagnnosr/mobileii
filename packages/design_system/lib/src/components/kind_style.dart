@@ -43,7 +43,11 @@ KindStyle kindStyleOf(BuildContext context, TransactionKind kind) {
 }
 
 /// Squircle (or circle) with the kind arrow on a same-hue tonal gradient.
+///
+/// The tonal fill (container toward surface) is in the gradient budget; it
+/// never takes the brand gradient. No glow.
 class KindOrb extends StatelessWidget {
+  /// Creates an orb for [kind], 44px by default.
   const KindOrb({
     required this.kind,
     super.key,
@@ -51,6 +55,7 @@ class KindOrb extends StatelessWidget {
     this.circle = false,
   });
 
+  /// Kind whose colors and arrow are shown (from [kindStyleOf]).
   final TransactionKind kind;
 
   /// Outer side: 44 in list tiles, 24 in the hero legs, 52 in Detalhe.
@@ -69,7 +74,9 @@ class KindOrb extends StatelessWidget {
         // 44 -> 14, 52 -> 16.
         borderRadius: circle
             ? null
-            : BorderRadius.circular(size >= 52 ? 16 : size * 0.32),
+            : BorderRadius.circular(
+                size >= 52 ? 16 : (size * 0.32).roundToDouble(),
+              ),
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,

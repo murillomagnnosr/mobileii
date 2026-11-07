@@ -11,6 +11,7 @@ import 'gap.dart';
 /// Screens place rows in an `AppPanel(padding: h16 v4)` separated by
 /// `Divider(indent: 48)`, which lines up with the text after the icon tile.
 class DetailRow extends StatelessWidget {
+  /// Creates a row showing [label] and [value].
   const DetailRow({
     required this.label,
     required this.value,
@@ -18,10 +19,13 @@ class DetailRow extends StatelessWidget {
     this.icon,
   });
 
+  /// Muted caption on the left, e.g. "Data".
   final String label;
 
   /// Already formatted. Long values wrap instead of being cut.
   final String value;
+
+  /// Optional glyph on a 36px primary squircle at [AppEffects.tintAlpha].
   final IconData? icon;
 
   @override

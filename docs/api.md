@@ -1,9 +1,10 @@
 # API Carteira — requests e responses
 
 Documentação de todas as rotas consumidas pelo app Carteira Digital, com o
-formato exato de cada requisição e resposta. Baseada na referência do curso
-(`api-referencia.pdf`, servidor `server/` versão 0.1.0) e implementada também
-pelo mock local `tool/mock_server.dart`.
+formato exato de cada requisição e resposta. Baseada na referência da API do
+curso (um PDF que fica fora deste repositório, capturado do servidor `server/`
+versão 0.1.0) e implementada também
+pelo mock local `tool/mock_server.dart` (detalhes em [Mock local](#mock-local)).
 
 No app, quem fala com a API é o pacote `carteira_core`:
 `ApiClient` (transporte + mapeamento de erros) e os repositórios remotos
@@ -41,7 +42,7 @@ A coluna **No app** das tabelas indica o método que chama cada rota.
 - **Valores:** `number` com duas casas, sempre positivo. O `type` diz se o
   dinheiro entra ou sai.
 - **Campos opcionais:** vêm sempre, com `null` quando vazios.
-- **Latência:** de 300 a 800 ms.
+- **Latência:** de 300 a 800 ms por padrão (`LATENCY_MIN_MS`/`LATENCY_MAX_MS`).
 - **CORS:** qualquer origem; `OPTIONS` responde 204.
 - **Credenciais de teste:** `ana@carteira.dev` / `123456` e
   `bruno@carteira.dev` / `123456`.
@@ -128,7 +129,7 @@ mensagem por campo inválido:
 
 | Status | `code`                | Quando                                  | `AppError` no app                         |
 | ------ | --------------------- | --------------------------------------- | ----------------------------------------- |
-| 400    | `bad_request`         | corpo não é JSON válido                 | `UnknownError`                            |
+| 400    | `bad_request`         | corpo não é um objeto JSON válido (no mock, também URL malformada) | `UnknownError`                            |
 | 401    | `invalid_credentials` | e-mail ou senha errados no login        | `UnauthorizedError(invalidCredentials)`   |
 | 401    | `unauthorized`        | token ausente, desconhecido ou encerrado| `UnauthorizedError`                       |
 | 401    | `token_expired`       | só com `X-Fail: expired`                | `UnauthorizedError(expired)`              |
@@ -336,6 +337,10 @@ No app os parâmetros vêm de `TransactionFilter.toQueryParameters()`.
 }
 ```
 
+O exemplo é o da referência (capturado com outros filtros). No mock, com o
+[seed](#mock-local), a lista sem filtros tem `total: 60`, e
+`?month=<mês atual>&type=expense&q=mercado` tem `total: 2`.
+
 Uma página além do fim devolve `items: []`, não erro.
 
 **Erros**
@@ -521,7 +526,9 @@ Authorization: Bearer <token>
 
 ### `POST /reset`
 
-Devolve os dados da sessão ao estado inicial. O token continua válido.
+Devolve os dados da sessão ao estado do seed: os lançamentos, a numeração
+dos ids (o próximo criado volta a ser `tx_0081`) e o perfil alterado por
+`PUT /me`. O token continua válido.
 
 **Request**
 
@@ -542,17 +549,108 @@ testar os estados de erro e de carregamento das telas.
 | `X-Delay-Ms: 3000` | usa exatamente esta latência, em ms                                     |
 | `X-Fail: 500`      | 500 com `{"error":{"code":"internal","message":"Simulated failure"}}`   |
 | `X-Fail: expired`  | 401 com `{"error":{"code":"token_expired","message":"Token has expired"}}` |
-| `X-Fail: timeout`  | segura a requisição por 60 s e responde 504 em texto puro               |
+| `X-Fail: timeout`  | segura a requisição por 60 s e responde 504 em texto puro (no mock, os 60 s contam depois da latência normal ou do `X-Delay-Ms`) |
 
 Com token válido, uma rota inexistente responde
 `404 {"error":{"code":"not_found","message":"Route <caminho> not found"}}`.
+Sem token, qualquer rota protegida (inclusive uma inexistente) responde 401.
+
+## Mock local
+
+`tool/mock_server.dart` implementa todas as rotas acima sem o `server/` do
+curso. A lógica fica em `tool/mock_server/mock_server.dart` (só `dart:io`),
+que também pode ser importada por testes; os dados iniciais ficam em
+`tool/mock_server/seed.dart` e a leitura das opções da linha de comando, em
+`tool/mock_server/cli.dart`. Os testes estão em `test/tool/` (contrato,
+ponta a ponta com o `carteira_core` e linha de comando).
+
+**Linha de comando**
+
+```sh
+dart run tool/mock_server.dart                 # http://localhost:8080, 300–800 ms
+dart run tool/mock_server.dart --port 9090     # ou -p 9090, --port=9090
+PORT=0 LATENCY_MIN_MS=0 LATENCY_MAX_MS=0 dart run tool/mock_server.dart
+```
+
+| Opção / variável  | Padrão | Efeito                                                       |
+| ----------------- | ------ | ------------------------------------------------------------ |
+| `--port`, `-p`    | —      | porta HTTP; tem prioridade sobre `PORT`; `0` escolhe uma livre |
+| `PORT`            | 8080   | porta HTTP quando `--port` não vem                           |
+| `LATENCY_MIN_MS`  | 300    | latência mínima de cada requisição, em ms                    |
+| `LATENCY_MAX_MS`  | 800    | latência máxima; se só uma das duas vier e cruzar a outra, a outra acompanha (`LATENCY_MAX_MS=0` desliga a latência) |
+| `--help`, `-h`    | —      | mostra a ajuda                                               |
+
+Valor inválido encerra com código 64; porta ocupada, com código 1 e uma
+mensagem. A latência sorteada vale para toda rota, exceto `OPTIONS`;
+`X-Delay-Ms` a substitui. As requisições são atendidas em paralelo: um
+`X-Fail: timeout` não trava as outras.
+
+**Em testes**
+
+```dart
+import '../tool/mock_server/mock_server.dart'; // caminho relativo ao teste
+
+final server = await startMockServer(
+  port: 0, // porta livre; nunca 8080 em teste
+  minLatency: Duration.zero,
+  maxLatency: Duration.zero,
+  timeoutHold: const Duration(milliseconds: 100), // X-Fail: timeout
+  clock: () => DateTime.utc(2026, 9, 30, 12), // "mês atual" e datas do seed
+);
+final api = ApiClient(baseUrl: server.baseUrl.toString());
+// ...
+await server.close();
+```
+
+**Regras que a referência não detalha e o mock adota**
+
+- **Seed:** 60 lançamentos (`tx_0001` a `tx_0060`, ids em ordem
+  cronológica), recalculados a cada login/reset a partir do "agora": 6 no
+  mês atual (`tx_0055`–`tx_0060`), 4 no anterior (`tx_0051`–`tx_0054`) e 10
+  em cada um dos cinco meses antes dele. Assim o extrato padrão (20 por
+  página) tem três páginas. No mês atual o resumo é o do exemplo: receitas
+  9526.55, despesas 5330.04, saldo 4196.51 (há uma transferência de 500 que
+  fica de fora). `tx_0060` é o mais recente e o primeiro criado é `tx_0081`,
+  como nos exemplos da referência; `tx_0061`–`tx_0080` não existem de
+  propósito.
+- **Sem datas no futuro:** no começo do mês, um lançamento do mês atual que
+  cairia depois de "agora" (o salário do dia 25, por exemplo) fica com a data
+  de agora, truncada ao minuto. O resumo do mês não muda e a ordem da lista
+  é mantida pelo desempate por `id`.
+- **Login:** o e-mail é comparado sem espaços nas pontas e sem diferenciar
+  maiúsculas. O token tem o formato `tok_` + 24 caracteres `[0-9a-z]`.
+- **Corpo:** JSON válido que não é objeto (lista, número) também recebe 400.
+- **Datas:** só o formato estendido
+  `YYYY-MM-DD[THH:MM[:SS[.fração]][Z|±HH|±HH:MM|±HHMM]]`, com `T` e `Z`
+  em qualquer caixa; o formato básico (`20260906T143200Z`) e datas
+  inexistentes (30/02, mês 13, 25h) recebem 422. Sem fuso, vale UTC.
+  A resposta sai sempre como `YYYY-MM-DDTHH:MM:SSZ`, sem frações.
+- **URL malformada:** escape `%XX` que não forma UTF-8 válido, no caminho ou
+  na query, recebe 400 `{"error":{"code":"bad_request","message":"Malformed URL"}}`.
+- **Cabeçalhos:** as respostas 204 não têm corpo nem `Content-Type`; o 422
+  sai com a frase `Unprocessable Entity`.
+- **Valores:** `amount` que arredonda para 0 (ex.: `0.004`) recebe
+  `"must be greater than zero"`; `amount` que não é número recebe
+  `"must be a number"`.
+- **Tipos errados:** texto obrigatório com outro tipo recebe
+  `"must be a string"`; `category`, `note` e `avatarUrl` com outro tipo
+  recebem `"must be a string or null"`.
+- **Mensagens de 422:** `Invalid transaction` (lançamentos), `Invalid user`
+  (`PUT /me`), `Invalid credentials` (login) e `Invalid parameters`
+  (query de `/transactions` e `/summary`). Em `/transactions`, `type`
+  inválido recebe `"must be income, expense or transfer"` e `pageSize`,
+  `"must be an integer between 1 and 100"`.
+- **Ordem da lista:** data decrescente; empate, `id` decrescente.
+- **Busca `q`:** espaços nas pontas são ignorados; vazia não filtra.
+- **Erro inesperado:** 500 `{"error":{"code":"internal","message":"Internal server error"}}`,
+  sem expor a exceção (ela vai só para o log do terminal).
 
 ## Mapa tela → rotas
 
 | Tela (cena)             | Rotas                                                      |
 | ----------------------- | ---------------------------------------------------------- |
 | Login                   | `POST /auth/login`                                         |
-| Home                    | `GET /me`, `GET /summary`, `GET /transactions?pageSize=5`  |
+| Home                    | `GET /me`, `GET /summary`, `GET /transactions?month&pageSize=5` |
 | Extrato                 | `GET /transactions?type&q&page&pageSize`                   |
 | Detalhe do lançamento   | `GET /transactions/:id`, `DELETE /transactions/:id`        |
 | Novo / editar lançamento| `POST /transactions`, `PUT /transactions/:id`              |

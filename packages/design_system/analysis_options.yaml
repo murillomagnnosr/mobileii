@@ -18,3 +18,5 @@ linter:
     - sized_box_for_whitespace
     - use_colored_box
     - use_decorated_box
+    # Every public member of lib/ carries a dartdoc (the README points here).
+    - public_member_api_docs

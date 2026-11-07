@@ -13,6 +13,7 @@ import 'gap.dart';
 /// [amount] arrives formatted, like everywhere else in the package; the
 /// widget does not know what a category or a transaction is.
 class CategoryBar extends StatelessWidget {
+  /// Creates one category row.
   const CategoryBar({
     required this.label,
     required this.amount,
@@ -20,6 +21,7 @@ class CategoryBar extends StatelessWidget {
     super.key,
   });
 
+  /// Category name, ellipsized on one line.
   final String label;
 
   /// Already formatted, e.g. "R\$ 702,20".

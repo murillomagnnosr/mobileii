@@ -20,6 +20,7 @@ import 'transaction_tile.dart';
 /// on the nebula; the legs sit on near-opaque chips so the kind colors keep
 /// their contrast.
 class BalanceCard extends StatelessWidget {
+  /// Creates the card from already formatted figures.
   const BalanceCard({
     required this.balance,
     required this.income,
@@ -30,13 +31,21 @@ class BalanceCard extends StatelessWidget {
     this.animateIn = true,
   });
 
-  /// All three already formatted.
+  /// Balance of the month, already formatted ("R\$ 4.196,51"). Shown as a
+  /// display [MoneyText] that scales down instead of being cut.
   final String balance;
+
+  /// Income of the month, already formatted. Shown on the "Entradas" leg.
   final String income;
+
+  /// Expense of the month, already formatted. Shown on the "Saídas" leg.
   final String expense;
+
+  /// Muted label above the balance.
   final String title;
 
-  /// E.g. "Setembro 2026". Shown verbatim on the spark pill.
+  /// E.g. "Setembro 2026". Shown verbatim on the spark pill, which counts
+  /// as one of the two spark spots of the screen.
   final String? monthLabel;
 
   /// Fades and slides the card in once per mount.

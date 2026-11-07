@@ -11,6 +11,7 @@ import 'transaction_tile.dart';
 /// (transparent rest, muted label, outline, pill shape, 52 tall) comes from
 /// the theme's segmented button theme.
 class TransactionKindSelector extends StatelessWidget {
+  /// Creates the selector with [selected] highlighted.
   const TransactionKindSelector({
     required this.selected,
     required this.onChanged,
@@ -18,8 +19,13 @@ class TransactionKindSelector extends StatelessWidget {
     this.enabled = true,
   });
 
+  /// Highlighted kind, painted as a solid kind fill.
   final TransactionKind selected;
+
+  /// Called with the tapped kind.
   final ValueChanged<TransactionKind> onChanged;
+
+  /// False ignores taps, e.g. while the form saves.
   final bool enabled;
 
   @override

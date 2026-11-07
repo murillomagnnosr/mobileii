@@ -11,8 +11,10 @@ import 'gap.dart';
 /// [textKey] goes on the inner [Text], so `find.text` and key lookups keep
 /// working.
 class AppErrorBanner extends StatelessWidget {
+  /// Creates a banner showing [message].
   const AppErrorBanner(this.message, {super.key, this.textKey});
 
+  /// User-facing error text, painted in the error hue.
   final String message;
 
   /// Key of the message [Text].

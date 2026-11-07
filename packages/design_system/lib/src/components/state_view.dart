@@ -20,12 +20,15 @@ enum _StateKind { loading, empty, error }
 ///
 /// Fades and scales in (0.96 -> 1) once, on first build.
 class StateView extends StatelessWidget {
+  /// Spinner on a soft primary halo, with an optional [message].
   const StateView.loading({super.key, this.message})
     : _kind = _StateKind.loading,
       icon = null,
       actionLabel = null,
       onAction = null;
 
+  /// Primary squircle with the lime spark dot (one of the two spark spots of
+  /// the screen), [message] and an optional action button.
   const StateView.empty({
     required String this.message,
     super.key,
@@ -34,6 +37,8 @@ class StateView extends StatelessWidget {
     this.onAction,
   }) : _kind = _StateKind.empty;
 
+  /// Expense-tinted squircle, [message] and a "Tentar novamente" button
+  /// when [onRetry] is set.
   const StateView.error({
     required String this.message,
     super.key,
@@ -44,9 +49,17 @@ class StateView extends StatelessWidget {
        onAction = onRetry;
 
   final _StateKind _kind;
+
+  /// Muted, centered text under the visual (at most 280 wide).
   final String? message;
+
+  /// Glyph of the squircle. Unused while loading.
   final IconData? icon;
+
+  /// Label of the secondary button, shown only together with [onAction].
   final String? actionLabel;
+
+  /// Button callback; `onRetry` of [StateView.error].
   final VoidCallback? onAction;
 
   @override

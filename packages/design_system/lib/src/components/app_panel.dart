@@ -11,6 +11,7 @@ import '../tokens/app_spacing.dart';
 /// panel and not on the Scaffold beneath the glass. There is no blur: it only
 /// reads as glass over the AppBackdrop aurora.
 class AppPanel extends StatelessWidget {
+  /// Creates a glass panel around [child].
   const AppPanel({
     required this.child,
     super.key,
@@ -20,8 +21,15 @@ class AppPanel extends StatelessWidget {
     this.shadows,
   });
 
+  /// Content, laid out inside [padding].
   final Widget child;
+
+  /// Inner padding. Defaults to [AppSpacing.panel] on every side; panels
+  /// that hold list rows pass a tighter inset.
   final EdgeInsetsGeometry padding;
+
+  /// Corner radius. Defaults to [AppRadius.lg]; hero-sized panels (Login,
+  /// Detalhe header) use [AppRadius.xl].
   final double radius;
 
   /// Optional hue washed from the top-left corner at `kindGlowAlpha`

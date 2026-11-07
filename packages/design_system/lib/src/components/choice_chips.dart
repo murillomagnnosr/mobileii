@@ -12,6 +12,7 @@ typedef ChipOption<T> = ({T value, String label});
 /// primary with a small violet glow, the others a surface fill with an
 /// outline border.
 class AppChoiceChips<T> extends StatelessWidget {
+  /// Creates the chip row with [selected] highlighted.
   const AppChoiceChips({
     required this.options,
     required this.selected,
@@ -20,8 +21,13 @@ class AppChoiceChips<T> extends StatelessWidget {
     this.padding = EdgeInsets.zero,
   });
 
+  /// Chips in display order.
   final List<ChipOption<T>> options;
+
+  /// Value of the highlighted chip, compared with `==`.
   final T selected;
+
+  /// Called with the value of the tapped chip.
   final ValueChanged<T> onSelected;
 
   /// Inset of the scrolling row, so it can run edge to edge while the first

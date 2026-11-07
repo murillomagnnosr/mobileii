@@ -9,6 +9,8 @@ import '../tokens/app_colors.dart';
 /// Registered as a [ThemeExtension] so widgets read them with
 /// `context.semanticColors`.
 class AppSemanticColors extends ThemeExtension<AppSemanticColors> {
+  /// Creates the colors field by field. Themes use
+  /// [AppSemanticColors.fromPalette] instead.
   const AppSemanticColors({
     required this.income,
     required this.expense,
@@ -21,6 +23,8 @@ class AppSemanticColors extends ThemeExtension<AppSemanticColors> {
     required this.onKind,
   });
 
+  /// Picks the semantic fields of [palette]; [muted] is its
+  /// `onSurfaceMuted`.
   factory AppSemanticColors.fromPalette(AppColorPalette palette) {
     return AppSemanticColors(
       income: palette.income,
@@ -35,9 +39,18 @@ class AppSemanticColors extends ThemeExtension<AppSemanticColors> {
     );
   }
 
+  /// Income money and icons. Always paired with a "+" sign and a down
+  /// arrow: kinds never differ by color alone.
   final Color income;
+
+  /// Expense money and icons. Always paired with a "−" sign and an up
+  /// arrow.
   final Color expense;
+
+  /// Transfer icon. Transfer amounts stay neutral `onSurface`.
   final Color transfer;
+
+  /// Caution, e.g. the "Razoável" password strength.
   final Color warning;
 
   /// Secondary text color.
@@ -107,6 +120,8 @@ class AppSemanticColors extends ThemeExtension<AppSemanticColors> {
 
 /// Shortcut: `context.semanticColors.income`.
 extension SemanticColorsContext on BuildContext {
+  /// The [AppSemanticColors] of the nearest [Theme]. Asserts that the theme
+  /// was built by `AppTheme.light()` or `AppTheme.dark()`.
   AppSemanticColors get semanticColors {
     final colors = Theme.of(this).extension<AppSemanticColors>();
     assert(

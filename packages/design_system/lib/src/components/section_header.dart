@@ -6,6 +6,7 @@ import 'gap.dart';
 /// Small uppercase label that opens a group of items, with an optional
 /// action pill on the right ("Ver todos").
 class SectionHeader extends StatelessWidget {
+  /// Creates a header titled [title].
   const SectionHeader({
     required this.title,
     super.key,
@@ -13,8 +14,13 @@ class SectionHeader extends StatelessWidget {
     this.onAction,
   });
 
+  /// Group name, rendered uppercase in `labelSmall` after a solid accent dot.
   final String title;
+
+  /// Text of the pill on the right, e.g. "Ver todos". Null hides the pill.
   final String? actionLabel;
+
+  /// Called when the pill is tapped.
   final VoidCallback? onAction;
 
   @override

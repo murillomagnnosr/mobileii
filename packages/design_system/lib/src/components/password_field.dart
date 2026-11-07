@@ -9,13 +9,26 @@ import 'app_text_field.dart';
 import 'gap.dart';
 
 /// Password strength as computed by [PasswordField.strengthOf].
-enum PasswordStrength { empty, weak, fair, strong }
+enum PasswordStrength {
+  /// No text yet: empty bar, no label.
+  empty,
+
+  /// Score up to 2: "Fraca", expense color, a third of the bar.
+  weak,
+
+  /// Score 3 or 4: "Razoável", warning color, two thirds of the bar.
+  fair,
+
+  /// Score 5 or more: "Forte", income color, full bar.
+  strong,
+}
 
 /// Password input with a show/hide toggle and an optional strength bar.
 ///
 /// Stateful on purpose: whether the text is hidden is UI state that belongs
 /// to the widget, not to the screen's ViewModel.
 class PasswordField extends StatefulWidget {
+  /// Creates a password field, hidden until the eye toggle is tapped.
   const PasswordField({
     super.key,
     this.controller,
@@ -30,20 +43,38 @@ class PasswordField extends StatefulWidget {
     this.enabled = true,
   });
 
+  /// Text controller. Null makes the field create and dispose its own.
   final TextEditingController? controller;
+
+  /// Floating label. Defaults to 'Senha'.
   final String label;
+
+  /// Validation message under the field.
   final String? errorText;
 
   /// Show a strength meter under the field.
   final bool showStrength;
+
+  /// Action key of the keyboard (next, done).
   final TextInputAction? textInputAction;
+
+  /// Called on every edit.
   final ValueChanged<String>? onChanged;
+
+  /// Called when the keyboard action key is pressed.
   final ValueChanged<String>? onSubmitted;
+
+  /// Autofill hints, e.g. [AutofillHints.password].
   final Iterable<String>? autofillHints;
+
+  /// External focus node, to move focus between fields.
   final FocusNode? focusNode;
+
+  /// False greys the field out and ignores input.
   final bool enabled;
 
-  /// Length plus character classes (lower, upper, digit, symbol).
+  /// Score: one point per character class (lower, upper, digit, symbol),
+  /// plus one at 8 characters and one more at 12.
   static PasswordStrength strengthOf(String value) {
     if (value.isEmpty) return PasswordStrength.empty;
     var classes = 0;

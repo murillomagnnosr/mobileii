@@ -20,9 +20,18 @@ abstract final class AppRadius {
   /// Buttons, chips, segments, pills, progress tracks.
   static const double pill = 999;
 
+  /// [sm] on every corner.
   static const BorderRadius smAll = BorderRadius.all(Radius.circular(sm));
+
+  /// [md] on every corner (theme input borders, SnackBar).
   static const BorderRadius mdAll = BorderRadius.all(Radius.circular(md));
+
+  /// [lg] on every corner (Card, ListTile, FAB shapes).
   static const BorderRadius lgAll = BorderRadius.all(Radius.circular(lg));
+
+  /// [xl] on every corner (dialogs, date picker, hero panels).
   static const BorderRadius xlAll = BorderRadius.all(Radius.circular(xl));
+
+  /// [pill] on every corner: a stadium for any height.
   static const BorderRadius pillAll = BorderRadius.all(Radius.circular(pill));
 }

@@ -14,9 +14,11 @@ import '../tokens/app_radius.dart';
 /// It pops in once (scale 0.8 to 1.0) on first appearance and shrinks
 /// slightly while pressed. Nothing loops.
 class AppFab extends StatelessWidget {
+  /// Creates the gradient FAB. Pass it to `AppScaffold.floatingActionButton`
+  /// so it sits on the screen gutter.
   const AppFab({
     required this.onPressed,
-    this.tooltip,
+    required this.tooltip,
     this.icon = Icons.add_rounded,
     super.key,
   });
@@ -24,8 +26,11 @@ class AppFab extends StatelessWidget {
   /// Null disables the button.
   final VoidCallback? onPressed;
 
-  /// Also the accessible label (screens pass 'Novo lançamento').
-  final String? tooltip;
+  /// Tooltip and accessible label, e.g. 'Novo lançamento'. Required: an
+  /// icon-only button needs a name for screen readers.
+  final String tooltip;
+
+  /// Glyph, drawn at 28px in `onGradient`.
   final IconData icon;
 
   @override

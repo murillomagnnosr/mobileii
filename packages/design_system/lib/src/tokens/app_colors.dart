@@ -6,6 +6,8 @@ import 'package:flutter/material.dart';
 /// can be built from either one. Widgets never read these directly; they go
 /// through [ThemeData], `AppSemanticColors` or `AppEffects`.
 class AppColorPalette {
+  /// Creates a palette. Every field is required: both official palettes
+  /// define all 36, and `test/theme/contrast_test.dart` checks their pairs.
   const AppColorPalette({
     required this.primary,
     required this.onPrimary,
@@ -47,8 +49,14 @@ class AppColorPalette {
 
   /// Brand violet: focus ring, selected chip, links, CategoryBar fill.
   final Color primary;
+
+  /// Label on solid [primary] (selected chip, dialog confirm, fallback FAB).
   final Color onPrimary;
+
+  /// Avatar disc, "Ver todos" and caption pills, empty-state squircle.
   final Color primaryContainer;
+
+  /// Text and icons on [primaryContainer].
   final Color onPrimaryContainer;
 
   /// Page ground (lavender ice / space navy).
@@ -59,7 +67,11 @@ class AppColorPalette {
 
   /// Tracks, disabled CTA fill, dark field fill, dark chrome buttons.
   final Color surfaceVariant;
+
+  /// Primary text, neutral money, app bar titles and icons.
   final Color onSurface;
+
+  /// Secondary text, labels and hints (`AppSemanticColors.muted`).
   final Color onSurfaceMuted;
 
   /// Interactive 3:1 boundary: inputs, outlined buttons, chips, segments.
@@ -67,42 +79,76 @@ class AppColorPalette {
 
   /// Decorative hairlines only; never the only boundary of a control.
   final Color outlineVariant;
+
+  /// Income money and icons, solid "Entrada" segment, "Forte" strength.
   final Color income;
+
+  /// Expense money and icons, solid "Saída" segment, "Fraca" strength.
   final Color expense;
+
+  /// Transfer icon and solid "Transf." segment. Transfer amounts stay
+  /// neutral [onSurface].
   final Color transfer;
+
+  /// "Razoável" password strength.
   final Color warning;
+
+  /// Validation errors and destructive actions (same hue as [expense]).
   final Color error;
+
+  /// Label on solid [error] (destructive confirm button).
   final Color onError;
 
   /// Second neon hue (aqua): SectionHeader dot, hero rim end.
   final Color accent;
+
+  /// Content on a solid [accent] fill (`ColorScheme.onSecondary`).
   final Color onAccent;
 
   /// Lime pop. Fill only, rationed (at most two spots per screen).
   final Color spark;
+
+  /// Text on [spark] (month pill).
   final Color onSpark;
 
-  /// Solid kind tints: KindOrb, hero leg circle, kind pills.
+  /// Solid income tint: KindOrb, hero leg circle, Detalhe kind pill.
   final Color incomeContainer;
+
+  /// Solid expense tint: KindOrb, kind pill, error banner, destructive
+  /// dialog icon.
   final Color expenseContainer;
+
+  /// Solid transfer tint: KindOrb, kind pill.
   final Color transferContainer;
 
   /// Label and icon on a solid kind fill (selected kind segment).
   final Color onKind;
 
-  /// CTA / FAB / logomark gradient. [gradientStart] equals [primary].
+  /// Start of the CTA / FAB / logomark gradient. Equals [primary].
   final Color gradientStart;
+
+  /// End of the CTA gradient: electric blue (light), cyan (dark).
   final Color gradientEnd;
+
+  /// Label and icon on the CTA gradient.
   final Color onGradient;
 
-  /// Nebula fill of the balance card.
+  /// Nebula fill of the balance card, top-left.
   final Color heroStart;
+
+  /// Nebula fill of the balance card, bottom-right (ocean blue).
   final Color heroEnd;
+
+  /// Balance figure and strong text on the nebula.
   final Color onHero;
+
+  /// "Saldo do mês" on the nebula. A solid color, not an alpha.
   final Color onHeroMuted;
 
-  /// Aurora hues of the backdrop.
+  /// Violet aurora hue (backdrop washes top-left and bottom-right).
   final Color glowA;
+
+  /// Aqua aurora hue (right wash, Login spotlight, hero blob).
   final Color glowB;
 
   /// Translucent fill of AppPanel, capsule tiles and Card (with alpha).

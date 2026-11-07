@@ -9,6 +9,8 @@ import '../theme/app_effects.dart';
 /// Static and non-interactive: wrapped in [IgnorePointer] and a
 /// [RepaintBoundary]. No BackdropFilter.
 class AppBackdrop extends StatelessWidget {
+  /// Creates the backdrop. `AppScaffold` already paints one behind every
+  /// screen; use it directly only outside a scaffold.
   const AppBackdrop({super.key, this.spotlight = false});
 
   /// Adds the aqua spotlight above the middle of the screen (Login).

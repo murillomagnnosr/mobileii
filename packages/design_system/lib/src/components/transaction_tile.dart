@@ -1,9 +1,8 @@
-import 'dart:math' as math;
-
 import 'package:flutter/material.dart';
 
 import '../theme/app_effects.dart';
 import '../theme/app_semantic_colors.dart';
+import '../tokens/app_durations.dart';
 import '../tokens/app_motion.dart';
 import '../tokens/app_spacing.dart';
 import 'app_panel.dart';
@@ -12,7 +11,16 @@ import 'money_text.dart';
 
 /// Kind of movement a [TransactionTile] represents. Lives in the design
 /// system so the package stays independent from the domain models.
-enum TransactionKind { income, expense, transfer }
+enum TransactionKind {
+  /// Money coming into the wallet: down arrow, "+" amount.
+  income,
+
+  /// Money leaving the wallet: up arrow, "−" amount.
+  expense,
+
+  /// Transfer: swap arrows, neutral amount without sign.
+  transfer,
+}
 
 /// One row of the transactions list.
 ///
@@ -20,6 +28,7 @@ enum TransactionKind { income, expense, transfer }
 /// the row floats on its own glass capsule (Home); callers space capsules
 /// with `Gap.sm()`.
 class TransactionTile extends StatelessWidget {
+  /// Creates a row for one transaction.
   const TransactionTile({
     required this.kind,
     required this.title,
@@ -31,12 +40,19 @@ class TransactionTile extends StatelessWidget {
     this.entranceIndex,
   });
 
+  /// Picks the orb, arrow, amount color and sign through [kindStyleOf].
   final TransactionKind kind;
+
+  /// Main line (description), ellipsized on one line.
   final String title;
 
   /// Already formatted, e.g. "R\$ 89,90".
   final String amount;
+
+  /// Muted second line, e.g. category and date.
   final String? subtitle;
+
+  /// Called when the row is tapped. Null makes it inert.
   final VoidCallback? onTap;
 
   /// Wraps the row in an [AppPanel] with the light-only tile shadow.
@@ -89,10 +105,7 @@ class TransactionTile extends StatelessWidget {
     if (index != null) {
       tile = TweenAnimationBuilder<double>(
         tween: Tween(begin: 0, end: 1),
-        duration: AppMotion.of(
-          context,
-          Duration(milliseconds: 300 + 40 * math.min(index, 5)),
-        ),
+        duration: AppMotion.of(context, AppDurations.listEntranceAt(index)),
         curve: AppCurves.standard,
         builder: (context, t, child) => Opacity(
           opacity: t,

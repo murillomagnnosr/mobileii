@@ -70,8 +70,10 @@ Também há `panel 20`, `hero 24` e `fabClearance 104`.
 **Raios** (`AppRadius`): `sm 8 · md 14 (campos) · lg 20 (painéis, cápsulas) ·
 xl 28 (cartão de saldo, diálogos) · pill (botões, chips)`.
 
-**Movimento** (`AppDurations`, `AppMotion`): transições curtas e nada em loop.
-O `AppMotion` respeita a preferência de "reduzir animações" do sistema.
+**Movimento** (`AppDurations`, `AppMotion`): transições curtas (até 600 ms) e
+nada decorativo em loop; só os spinners indeterminados de carregamento giram
+enquanto a operação dura. O `AppMotion` respeita a preferência de "reduzir
+animações" do sistema.
 
 ### 2. Tema (`lib/src/theme/`)
 

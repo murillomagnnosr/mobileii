@@ -83,6 +83,19 @@ class _FormsPageState extends State<FormsPage> {
             const Gap.md(),
             TransactionKindSelector(selected: kind, onChanged: (_) {}),
           ],
+          const Gap.lg(),
+          Text(
+            'Desabilitado (enquanto o formulário salva)',
+            style: theme.textTheme.labelMedium?.copyWith(
+              color: theme.colorScheme.onSurfaceVariant,
+            ),
+          ),
+          const Gap.md(),
+          TransactionKindSelector(
+            selected: TransactionKind.expense,
+            enabled: false,
+            onChanged: (_) {},
+          ),
           const SectionHeader(title: 'DetailRow'),
           // 16 de padding + 36 do ícone - 4.
           const AppPanel(

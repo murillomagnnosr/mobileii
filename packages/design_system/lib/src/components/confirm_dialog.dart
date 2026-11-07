@@ -37,6 +37,8 @@ Future<bool> showConfirmDialog(
 /// Shape, colors and barrier come from the dialog theme. The confirm button
 /// is a solid [FilledButton] (the global theme is never a gradient).
 class ConfirmDialog extends StatelessWidget {
+  /// Creates the dialog. Screens call [showConfirmDialog], which also
+  /// returns the answer.
   const ConfirmDialog({
     required this.title,
     required this.message,
@@ -47,10 +49,19 @@ class ConfirmDialog extends StatelessWidget {
     this.icon,
   });
 
+  /// Centered title, e.g. "Excluir lançamento?".
   final String title;
+
+  /// Centered body text that states the consequence.
   final String message;
+
+  /// Label of the confirm button, which pops `true`.
   final String confirmLabel;
+
+  /// Label of the cancel button, which pops `false`.
   final String cancelLabel;
+
+  /// Paints the confirm button and the icon circle in the error hue.
   final bool destructive;
 
   /// Glyph in the circle above the title. `null` picks the default.

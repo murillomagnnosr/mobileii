@@ -8,6 +8,7 @@ import 'gap.dart';
 /// Avatar, name and e-mail centered at the top of the profile screen, with
 /// an optional caption pill underneath.
 class ProfileHeader extends StatelessWidget {
+  /// Creates the header for [name] and [email].
   const ProfileHeader({
     required this.name,
     required this.email,
@@ -17,8 +18,14 @@ class ProfileHeader extends StatelessWidget {
     this.avatarHeroTag,
   });
 
+  /// Full name: title line and avatar initials.
   final String name;
+
+  /// Muted line under the name.
   final String email;
+
+  /// Photo of the 96px [AppAvatar] (with glow); initials when null or
+  /// broken.
   final String? avatarUrl;
 
   /// Short line in a pill, e.g. "Cliente desde março de 2024".

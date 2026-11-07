@@ -7,8 +7,11 @@ import '../theme/app_effects.dart';
 /// 72px on Login (with glow and, optionally, the spark dot), 28px in the
 /// Home app bar. Decorative, so it is excluded from semantics.
 class AppLogoMark extends StatelessWidget {
+  /// Creates the mark, 72px (the Login size) by default.
   const AppLogoMark({super.key, this.size = 72, this.spark = false});
 
+  /// Tile side. 64 or more uses the large corner, the large glyph and the
+  /// logo glow; smaller marks have no glow.
   final double size;
 
   /// Lime spark dot on the top-right corner (counts in the spark budget).

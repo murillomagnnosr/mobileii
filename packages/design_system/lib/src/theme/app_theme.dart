@@ -10,9 +10,16 @@ import 'app_effects.dart';
 import 'app_semantic_colors.dart';
 
 /// Builds the two [ThemeData] of the app from the tokens.
+///
+/// Both register [AppSemanticColors] and [AppEffects] as extensions (which
+/// `context.semanticColors` and `context.effects` require), set Plus Jakarta
+/// Sans as the default family and style every Material sub-theme the app
+/// uses, so screens never pass colors or sizes of their own.
 abstract final class AppTheme {
+  /// Light theme from [AppColors.light] (lavender ice ground).
   static ThemeData light() => _build(AppColors.light, Brightness.light);
 
+  /// Dark theme from [AppColors.dark] (space-navy ground).
   static ThemeData dark() => _build(AppColors.dark, Brightness.dark);
 
   static ThemeData _build(AppColorPalette p, Brightness brightness) {

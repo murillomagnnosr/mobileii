@@ -9,6 +9,7 @@ import '../tokens/app_typography.dart';
 /// The outer size is always [size]: the ring, the gap ring and the disc are
 /// laid out inside it. At 64px or more the ring also gets the avatar glow.
 class AppAvatar extends StatelessWidget {
+  /// Creates an avatar for [name], 40px by default.
   const AppAvatar({
     required this.name,
     super.key,
@@ -17,8 +18,13 @@ class AppAvatar extends StatelessWidget {
     this.heroTag,
   });
 
+  /// Full name: source of the initials and of the semantics label.
   final String name;
+
+  /// Network photo. Null, empty or failing to load shows the initials.
   final String? imageUrl;
+
+  /// Outer side, ring included. 64 or more adds the avatar glow.
   final double size;
 
   /// When non-null, the whole avatar is wrapped in a [Hero] with this tag.

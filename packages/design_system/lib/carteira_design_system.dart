@@ -1,4 +1,11 @@
-/// Design system of the Carteira app: tokens, theme and components.
+/// Design system of the Carteira app ("Neon noturno+"): tokens, theme and
+/// components.
+///
+/// Give `MaterialApp` `AppTheme.light()` and `AppTheme.dark()`, call
+/// `AppFonts.registerLicenses()` in `main()` and build screens on
+/// `AppScaffold`. Widgets read meaning colors with `context.semanticColors`
+/// and decorative values with `context.effects`. Money and dates arrive
+/// already formatted as `String`.
 library;
 
 export 'src/components/app_avatar.dart';

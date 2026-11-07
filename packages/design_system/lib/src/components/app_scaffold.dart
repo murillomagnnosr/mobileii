@@ -11,6 +11,7 @@ import 'gap.dart';
 /// transparent app bar with 44px round chrome buttons, and horizontal screen
 /// padding around [body] (unless [padded] is false, for full-bleed lists).
 class AppScaffold extends StatelessWidget {
+  /// Creates a screen around [body].
   const AppScaffold({
     required this.body,
     super.key,
@@ -25,15 +26,32 @@ class AppScaffold extends StatelessWidget {
     this.brand = false,
   });
 
+  /// Screen content, under the app bar and inside the top safe area. Lists
+  /// scroll behind the bottom inset.
   final Widget body;
+
+  /// App bar title, in `AppTypography.appBarTitle` via the theme.
   final String? title;
+
+  /// App bar actions. Plain [IconButton]s become 44px round chrome buttons.
   final List<Widget>? actions;
+
+  /// Replaces the automatic back button.
   final Widget? leading;
 
   /// Rendered below the body, e.g. a [NavigationBar].
   final Widget? bottom;
+
+  /// Usually an `AppFab`. It sits on the 20px gutter, and the bottom of the
+  /// body fades out under it.
   final Widget? floatingActionButton;
+
+  /// Adds [AppSpacing.screen] on both sides of [body]. Pass false for
+  /// full-bleed lists that pad themselves.
   final bool padded;
+
+  /// False hides the app bar (Login); the status-bar style still follows
+  /// the theme.
   final bool showAppBar;
 
   /// Adds the Login spotlight to the backdrop.

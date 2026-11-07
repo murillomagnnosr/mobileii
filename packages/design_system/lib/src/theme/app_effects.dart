@@ -13,7 +13,18 @@ import '../tokens/app_colors.dart';
 /// Registered as a [ThemeExtension] so widgets read it with
 /// `context.effects`, and lerped on theme switches so the hero, the CTA and
 /// the aurora cross-fade.
+///
+/// The effects are rationed (scarcity budgets):
+/// - gradient: BalanceCard, primary AppButton, AppFab, AppLogoMark, the
+///   AppAvatar ring and the KindOrb tonal fill, nowhere else;
+/// - glow: BalanceCard, primary AppButton, AppFab, AppLogoMark and
+///   AppAvatar at 64px or more, and the selected chip;
+/// - spark: a fill only, at most two spots per screen.
+///
+/// Money figures never carry any of them.
 class AppEffects extends ThemeExtension<AppEffects> {
+  /// Creates the effects field by field. Themes use [AppEffects.fromPalette]
+  /// instead, which keeps the alphas within their AA caps.
   const AppEffects({
     required this.heroGradient,
     required this.heroRim,
@@ -47,6 +58,8 @@ class AppEffects extends ThemeExtension<AppEffects> {
     required this.scrolledBar,
   });
 
+  /// Derives every effect from palette [p], with the alphas and shadows of
+  /// [brightness]. `AppTheme` registers the result in both themes.
   factory AppEffects.fromPalette(AppColorPalette p, Brightness brightness) {
     final isDark = brightness == Brightness.dark;
     return AppEffects(
@@ -237,8 +250,11 @@ class AppEffects extends ThemeExtension<AppEffects> {
   /// Login spotlight. AA cap: 0.08 light / 0.10 dark.
   final Color spotlight;
 
-  /// Lime pop (fill only) and the text on it.
+  /// Lime pop: a fill only, never text or a money cue, at most two spots
+  /// per screen (hero month pill, empty-state dot, Login logomark dot).
   final Color spark;
+
+  /// Text on [spark] (hero month pill).
   final Color onSpark;
 
   /// Fill of the 44px round AppBar chrome buttons.
@@ -374,6 +390,8 @@ class AppEffects extends ThemeExtension<AppEffects> {
 
 /// Shortcut: `context.effects.heroGradient`.
 extension EffectsContext on BuildContext {
+  /// The [AppEffects] of the nearest [Theme]. Asserts that the theme was
+  /// built by `AppTheme.light()` or `AppTheme.dark()`.
   AppEffects get effects {
     final effects = Theme.of(this).extension<AppEffects>();
     assert(

@@ -14,13 +14,15 @@ typedef _FieldBorders = ({
   InputBorder? disabled,
 });
 
-/// Single-line text input of the design system.
+/// Text input of the design system: single-line by default, multi-line
+/// (e.g. the Observação field) through [maxLines].
 ///
 /// A thin layer over [TextField] that fixes the decoration and exposes only
 /// what the app screens need. Validation happens outside: pass the message
 /// through [errorText]. Borders, fill, label and icon colors come from the
 /// theme's input decoration (outline at rest, primary on focus, error).
 class AppTextField extends StatelessWidget {
+  /// Creates a field labelled [label].
   const AppTextField({
     required this.label,
     super.key,
@@ -48,24 +50,62 @@ class AppTextField extends StatelessWidget {
     this.floatingLabelBehavior,
   });
 
+  /// Floating label, also announced by screen readers.
   final String label;
+
+  /// Text controller. Null lets the [TextField] keep its own.
   final TextEditingController? controller;
+
+  /// Placeholder shown while the field is empty and its label floats.
   final String? hint;
+
+  /// Validation message. Non-null paints the error border and text.
   final String? errorText;
+
+  /// Muted line under the field, replaced by [errorText] when present.
   final String? helperText;
+
+  /// Keyboard to open, e.g. [TextInputType.emailAddress].
   final TextInputType? keyboardType;
+
+  /// Action key of the keyboard (next, done).
   final TextInputAction? textInputAction;
+
+  /// Automatic capitalization. Defaults to none.
   final TextCapitalization textCapitalization;
+
+  /// Hides the typed text. `PasswordField` manages this itself.
   final bool obscureText;
+
+  /// False greys the field out and ignores input.
   final bool enabled;
+
+  /// Requests focus on the first build.
   final bool autofocus;
+
+  /// Visible lines. Above 1 the label always floats and [prefixIcon] lines
+  /// up with the first line of text.
   final int maxLines;
+
+  /// Leading icon at 22px, tinted by state (rest, focus, error).
   final IconData? prefixIcon;
+
+  /// Trailing widget, e.g. the `PasswordField` visibility toggle.
   final Widget? suffix;
+
+  /// Formatters applied while typing (digits only, money masks).
   final List<TextInputFormatter>? inputFormatters;
+
+  /// Autofill hints, e.g. [AutofillHints.email].
   final Iterable<String>? autofillHints;
+
+  /// Called on every edit.
   final ValueChanged<String>? onChanged;
+
+  /// Called when the keyboard action key is pressed.
   final ValueChanged<String>? onSubmitted;
+
+  /// External focus node, to move focus between fields.
   final FocusNode? focusNode;
 
   /// Style of the typed text (e.g. `AppTypography.moneyInput` for Valor).

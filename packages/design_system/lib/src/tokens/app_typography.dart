@@ -20,6 +20,9 @@ abstract final class AppTypography {
   static const String fontPackage = 'carteira_design_system';
 
   // Display (Space Grotesk).
+
+  /// Space Grotesk 42/700. Base of `MoneySize.display` (balance, Detalhe
+  /// amount).
   static const TextStyle displayLarge = TextStyle(
     fontFamily: displayFamily,
     package: fontPackage,
@@ -29,6 +32,8 @@ abstract final class AppTypography {
     fontWeight: FontWeight.w700,
     fontVariations: [FontVariation('wght', 700)],
   );
+
+  /// Space Grotesk 36/700. Spare display slot.
   static const TextStyle displayMedium = TextStyle(
     fontFamily: displayFamily,
     package: fontPackage,
@@ -38,6 +43,8 @@ abstract final class AppTypography {
     fontWeight: FontWeight.w700,
     fontVariations: [FontVariation('wght', 700)],
   );
+
+  /// Space Grotesk 30/700. Spare display slot.
   static const TextStyle displaySmall = TextStyle(
     fontFamily: displayFamily,
     package: fontPackage,
@@ -47,6 +54,8 @@ abstract final class AppTypography {
     fontWeight: FontWeight.w700,
     fontVariations: [FontVariation('wght', 700)],
   );
+
+  /// Space Grotesk 34/700. Spare headline slot.
   static const TextStyle headlineLarge = TextStyle(
     fontFamily: displayFamily,
     package: fontPackage,
@@ -56,6 +65,8 @@ abstract final class AppTypography {
     fontWeight: FontWeight.w700,
     fontVariations: [FontVariation('wght', 700)],
   );
+
+  /// Space Grotesk 32/700. Login "Entrar".
   static const TextStyle headlineMedium = TextStyle(
     fontFamily: displayFamily,
     package: fontPackage,
@@ -67,6 +78,8 @@ abstract final class AppTypography {
   );
 
   // UI (Plus Jakarta Sans).
+
+  /// Plus Jakarta Sans 24/800. Spare headline slot.
   static const TextStyle headlineSmall = TextStyle(
     fontFamily: sansFamily,
     package: fontPackage,
@@ -76,6 +89,8 @@ abstract final class AppTypography {
     fontWeight: FontWeight.w800,
     fontVariations: [FontVariation('wght', 800)],
   );
+
+  /// 22/800: greeting, profile name, dialog title (the dialog theme uses 20).
   static const TextStyle titleLarge = TextStyle(
     fontFamily: sansFamily,
     package: fontPackage,
@@ -85,6 +100,8 @@ abstract final class AppTypography {
     fontWeight: FontWeight.w800,
     fontVariations: [FontVariation('wght', 800)],
   );
+
+  /// 17/700: Detalhe description.
   static const TextStyle titleMedium = TextStyle(
     fontFamily: sansFamily,
     package: fontPackage,
@@ -94,6 +111,8 @@ abstract final class AppTypography {
     fontWeight: FontWeight.w700,
     fontVariations: [FontVariation('wght', 700)],
   );
+
+  /// 15/700: tile and list titles; base of DetailRow values.
   static const TextStyle titleSmall = TextStyle(
     fontFamily: sansFamily,
     package: fontPackage,
@@ -103,6 +122,8 @@ abstract final class AppTypography {
     fontWeight: FontWeight.w700,
     fontVariations: [FontVariation('wght', 700)],
   );
+
+  /// 17/500: typed text, Login subtitle, StateView message.
   static const TextStyle bodyLarge = TextStyle(
     fontFamily: sansFamily,
     package: fontPackage,
@@ -112,6 +133,8 @@ abstract final class AppTypography {
     fontWeight: FontWeight.w500,
     fontVariations: [FontVariation('wght', 500)],
   );
+
+  /// 15/500: body text, field labels and hints, DetailRow label.
   static const TextStyle bodyMedium = TextStyle(
     fontFamily: sansFamily,
     package: fontPackage,
@@ -121,6 +144,8 @@ abstract final class AppTypography {
     fontWeight: FontWeight.w500,
     fontVariations: [FontVariation('wght', 500)],
   );
+
+  /// 13/500: subtitles, captions, helper and error text.
   static const TextStyle bodySmall = TextStyle(
     fontFamily: sansFamily,
     package: fontPackage,
@@ -130,6 +155,8 @@ abstract final class AppTypography {
     fontWeight: FontWeight.w500,
     fontVariations: [FontVariation('wght', 500)],
   );
+
+  /// 15/700: buttons, segments and chips (chips use 14).
   static const TextStyle labelLarge = TextStyle(
     fontFamily: sansFamily,
     package: fontPackage,
@@ -139,6 +166,8 @@ abstract final class AppTypography {
     fontWeight: FontWeight.w700,
     fontVariations: [FontVariation('wght', 700)],
   );
+
+  /// 13/700: pills (month, kind, caption, "Ver todos").
   static const TextStyle labelMedium = TextStyle(
     fontFamily: sansFamily,
     package: fontPackage,

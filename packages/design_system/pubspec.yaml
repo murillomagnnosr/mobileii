@@ -1,6 +1,6 @@
 name: carteira_design_system
 description: Tokens, theme and UI components of the Carteira app.
-version: 1.0.0
+version: 2.0.0
 publish_to: none
 
 environment:

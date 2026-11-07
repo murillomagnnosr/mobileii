@@ -30,7 +30,7 @@ packages:
       path: "packages/design_system"
       relative: true
     source: path
-    version: "1.0.0"
+    version: "2.0.0"
   characters:
     dependency: transitive
     description:

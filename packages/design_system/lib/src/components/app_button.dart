@@ -9,7 +9,16 @@ import '../tokens/app_typography.dart';
 import 'gap.dart';
 
 /// Visual weight of an [AppButton].
-enum AppButtonVariant { primary, secondary, text }
+enum AppButtonVariant {
+  /// Neon CTA pill: gradient plus glow (counts in both budgets).
+  primary,
+
+  /// Outlined pill for alternative and destructive actions.
+  secondary,
+
+  /// Text only, for low-emphasis actions.
+  text,
+}
 
 /// Button of the design system.
 ///
@@ -23,6 +32,7 @@ enum AppButtonVariant { primary, secondary, text }
 /// While [isLoading] is true the button shows a spinner and ignores taps, so
 /// a ViewModel can bind it straight to a running command.
 class AppButton extends StatelessWidget {
+  /// Creates a button; [variant] defaults to the primary CTA.
   const AppButton({
     required this.label,
     required this.onPressed,
@@ -34,6 +44,7 @@ class AppButton extends StatelessWidget {
     this.destructive = false,
   });
 
+  /// Outlined button; [destructive] paints it in the error hue.
   const AppButton.secondary({
     required this.label,
     required this.onPressed,
@@ -44,6 +55,7 @@ class AppButton extends StatelessWidget {
     this.destructive = false,
   }) : variant = AppButtonVariant.secondary;
 
+  /// Text button, shrink-wrapped by default and never destructive.
   const AppButton.text({
     required this.label,
     required this.onPressed,
@@ -54,12 +66,19 @@ class AppButton extends StatelessWidget {
   }) : variant = AppButtonVariant.text,
        destructive = false;
 
+  /// Button text and semantics label (still announced while loading).
   final String label;
 
   /// Null disables the button.
   final VoidCallback? onPressed;
+
+  /// Which of the three looks is painted.
   final AppButtonVariant variant;
+
+  /// Swaps the label for a spinner and ignores taps.
   final bool isLoading;
+
+  /// Optional 20px icon before [label].
   final IconData? icon;
 
   /// Stretch to the parent's width. Text buttons default to false.

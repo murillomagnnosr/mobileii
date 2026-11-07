@@ -3,8 +3,9 @@ import 'package:flutter/material.dart';
 
 import '../main.dart';
 
-/// Documents the tokens of the active theme: palette, effects, kind styles,
-/// scarcity budgets, type, radii, spacing and motion.
+/// Documents the tokens of the active theme: palette, effects (gradients,
+/// glows, glass, auroras and shadows), kind styles, scarcity budgets, type
+/// (with axes and licences), radii, spacing and motion.
 ///
 /// Every value is read from the tokens or the theme, never repeated here.
 /// The page is exempt from the spark budget because it documents the colour.
@@ -25,6 +26,8 @@ class TokensPage extends StatelessWidget {
           _Gradients(),
           SectionHeader(title: 'Brilhos'),
           _Glows(),
+          SectionHeader(title: 'Vidro, auroras e sombras'),
+          _Surfaces(),
           SectionHeader(title: 'Tipos de lançamento'),
           _Kinds(),
           SectionHeader(title: 'Orçamentos'),
@@ -450,6 +453,133 @@ class _Recipe extends StatelessWidget {
 }
 
 // ---------------------------------------------------------------------------
+// 3b. Glass, auroras and shadows
+
+/// Every [AppEffects] colour that is not a gradient or a glow, the four
+/// ambient shadows and the two alphas. "AA cap" values must not be raised:
+/// `test/theme/contrast_test.dart` checks them.
+class _Surfaces extends StatelessWidget {
+  const _Surfaces();
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final e = context.effects;
+    final colors = <(String, Color)>[
+      ('glass · AA cap', e.glass),
+      ('glassBorder', e.glassBorder),
+      ('glassSheen', e.glassSheen),
+      ('auroraA · AA cap', e.auroraA),
+      ('auroraB · AA cap', e.auroraB),
+      ('auroraC · AA cap', e.auroraC),
+      ('spotlight · AA cap', e.spotlight),
+      ('heroBlob · AA cap', e.heroBlob),
+      ('heroOrbit · AA cap', e.heroOrbit),
+      ('legChip', e.legChip),
+      ('onHero', e.onHero),
+      ('onHeroMuted', e.onHeroMuted),
+      ('onSpark', e.onSpark),
+      ('chromeFill', e.chromeFill),
+      ('scrolledBar', e.scrolledBar),
+    ];
+    final shadows = <(String, List<BoxShadow>)>[
+      ('panelShadow', e.panelShadow),
+      ('tileShadow', e.tileShadow),
+      ('heroShadow', e.heroShadow),
+      ('logoGlow', e.logoGlow),
+    ];
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        const _Subheading('Vidro sobre o AppBackdrop (sem blur)'),
+        SizedBox(
+          height: 168,
+          child: ClipRRect(
+            borderRadius: AppRadius.lgAll,
+            child: Stack(
+              children: [
+                const Positioned.fill(child: AppBackdrop(spotlight: true)),
+                Padding(
+                  padding: const EdgeInsets.all(AppSpacing.lg),
+                  child: AppPanel(
+                    child: Text(
+                      'AppPanel: glass, glassBorder, glassSheen e '
+                      'panelShadow sobre as auroras A, B e C.',
+                      style: theme.textTheme.bodyMedium,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+        const _Subheading('Cores de efeito'),
+        LayoutBuilder(
+          builder: (context, constraints) {
+            final width = ((constraints.maxWidth - AppSpacing.md) / 2)
+                .floorToDouble();
+            return Wrap(
+              spacing: AppSpacing.md,
+              runSpacing: AppSpacing.md,
+              children: [
+                for (final (name, color) in colors)
+                  SizedBox(
+                    width: width,
+                    child: _SwatchTile(name: name, color: color),
+                  ),
+              ],
+            );
+          },
+        ),
+        const _Subheading('Sombras ambiente'),
+        for (final (name, list) in shadows)
+          Padding(
+            padding: const EdgeInsets.only(bottom: AppSpacing.md),
+            child: Row(
+              children: [
+                DecoratedBox(
+                  decoration: BoxDecoration(
+                    color: theme.colorScheme.surface,
+                    borderRadius: AppRadius.mdAll,
+                    boxShadow: list,
+                  ),
+                  child: const SizedBox.square(dimension: 48),
+                ),
+                const Gap.lg(),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(name, style: theme.textTheme.labelMedium),
+                      Text(
+                        list.isEmpty
+                            ? 'nenhuma neste tema'
+                            : [
+                                for (final s in list)
+                                  'α ${s.color.a.toStringAsFixed(2)} · '
+                                      'blur ${_number(s.blurRadius)} · '
+                                      'y ${_number(s.offset.dy)}',
+                              ].join('\n'),
+                        style: _mono(context),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        const _Subheading('Alphas'),
+        Text(
+          'kindGlowAlpha ${_number(e.kindGlowAlpha)} (AA cap 0.12) · '
+          'tintAlpha ${_number(e.tintAlpha)}',
+          style: _mono(context),
+        ),
+      ],
+    );
+  }
+}
+
+// ---------------------------------------------------------------------------
 // 4. Transaction kinds
 
 class _Kinds extends StatelessWidget {
@@ -729,10 +859,14 @@ class _Typography extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        const _Subheading('Plus Jakarta Sans · interface e valores de lista'),
+        const _Subheading(
+          'Plus Jakarta Sans · wght 200–800 · interface e valores de lista',
+        ),
         for (final (name, style) in slots)
           if (!_isDisplay(style)) specimen(name, style),
-        const _Subheading('Space Grotesk · números grandes e títulos'),
+        const _Subheading(
+          'Space Grotesk · wght 300–700 · números grandes e títulos',
+        ),
         for (final (name, style) in slots)
           if (_isDisplay(style)) specimen(name, style),
         _Specimen(
@@ -783,6 +917,27 @@ class _Typography extends StatelessWidget {
                   ),
                 ),
             ],
+          ),
+        ),
+        const _Subheading('Licenças'),
+        Text(
+          'As duas fontes são variáveis, vêm embutidas no pacote e usam a SIL '
+          'Open Font License 1.1. AppFonts.registerLicenses(), chamado no '
+          'main, publica as licenças na tela de licenças.',
+          style: t.bodySmall?.copyWith(
+            color: theme.colorScheme.onSurfaceVariant,
+          ),
+        ),
+        const Gap.md(),
+        Align(
+          alignment: AlignmentDirectional.centerStart,
+          child: AppButton.secondary(
+            label: 'Ver licenças',
+            expanded: false,
+            onPressed: () => showLicensePage(
+              context: context,
+              applicationName: 'Galeria do design system',
+            ),
           ),
         ),
       ],
@@ -922,6 +1077,17 @@ class _Motion extends StatelessWidget {
         AppDurations.emphasized,
         'Preenchimento da CategoryBar (o mais longo).',
       ),
+      (
+        'listEntrance',
+        AppDurations.listEntrance,
+        'Entrada da primeira linha de uma lista escalonada.',
+      ),
+      (
+        'stagger',
+        AppDurations.stagger,
+        'Atraso extra por linha, até '
+            '${AppDurations.staggerMaxSteps} passos.',
+      ),
     ];
     final curves = <(String, Curve, String)>[
       (
@@ -1004,7 +1170,9 @@ class _Motion extends StatelessWidget {
         const Gap.md(),
         Text(
           'AppMotion.of zera as durações quando o sistema pede menos '
-          'movimento. Nada fica em loop e nada passa de 600 ms.',
+          'movimento. Nada passa de 600 ms e nada decorativo fica em loop; só '
+          'os spinners indeterminados (StateView.loading, AppButton.isLoading) '
+          'giram enquanto carregam.',
           style: mono,
         ),
       ],

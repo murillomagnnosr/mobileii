@@ -4,10 +4,32 @@ import '../theme/app_semantic_colors.dart';
 import '../tokens/app_typography.dart';
 
 /// Which semantic color a money figure takes.
-enum MoneyTone { neutral, income, expense }
+enum MoneyTone {
+  /// `onSurface`: balances and transfers. Never signed.
+  neutral,
+
+  /// [AppSemanticColors.income]; "+" when [MoneyText.signed].
+  income,
+
+  /// [AppSemanticColors.expense]; "−" when [MoneyText.signed].
+  expense,
+}
 
 /// Size of a [MoneyText].
-enum MoneySize { small, medium, large, display }
+enum MoneySize {
+  /// [AppTypography.moneySmall] (13).
+  small,
+
+  /// [AppTypography.moneyMedium] (17): tile amounts and hero legs.
+  medium,
+
+  /// [AppTypography.moneyLarge] (22).
+  large,
+
+  /// [AppTypography.displayLarge] (Space Grotesk 42) with a half-size
+  /// "R$". Always scales down to fit. Balance and Detalhe amount.
+  display,
+}
 
 /// Money figure. The string arrives formatted by the caller
 /// ("R\$ 1.234,56"); the widget only picks color and size.
@@ -16,6 +38,7 @@ enum MoneySize { small, medium, large, display }
 /// shadow, emoji, partial opacity or count-up. Exactly one [Text] is built,
 /// so tests can read its color and plain text.
 class MoneyText extends StatelessWidget {
+  /// Creates a figure for the already formatted [value].
   const MoneyText(
     this.value, {
     super.key,
@@ -25,8 +48,13 @@ class MoneyText extends StatelessWidget {
     this.scaleDown = false,
   });
 
+  /// Formatted amount, e.g. "R\$ 89,90". Pass it unsigned with [signed].
   final String value;
+
+  /// Color of the figure. Defaults to neutral.
   final MoneyTone tone;
+
+  /// Style of the figure. Defaults to medium.
   final MoneySize size;
 
   /// Prefix "+" for income and "−" for expense.
@@ -40,12 +68,14 @@ class MoneyText extends StatelessWidget {
   // Sign, currency (with its original space, NBSP included) and the rest.
   static final RegExp _parts = RegExp(r'^([+−-]?)(R\$\s?)(.*)$');
 
-  // Half-size "R$" of display figures. Family and color are inherited.
-  static const TextStyle _currency = TextStyle(
-    fontSize: 21,
-    letterSpacing: -0.2,
-    fontWeight: FontWeight.w600,
-    fontVariations: [FontVariation('wght', 600)],
+  // Half-size "R$" of display figures (half of displayLarge, weight 600 on
+  // both the weight and the wght axis). Family and color are inherited.
+  static final TextStyle _currency = AppTypography.weighted(
+    TextStyle(
+      fontSize: AppTypography.displayLarge.fontSize! / 2,
+      letterSpacing: -0.2,
+    ),
+    600,
   );
 
   @override
