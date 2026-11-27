@@ -1,0 +1,37 @@
+/// Ponto de entrada único do design system. Importe só este arquivo no app.
+library;
+
+export 'components/ds_button/ds_button_component.dart';
+export 'components/ds_button/ds_button_factory.dart';
+export 'components/ds_button/ds_button_view_model.dart';
+export 'components/ds_card/ds_card.dart';
+export 'components/ds_chart/ds_bar_chart.dart';
+export 'components/ds_chart/ds_donut_chart.dart';
+export 'components/ds_feedback/ds_choice_chips.dart';
+export 'components/ds_motion/ds_entrance.dart';
+export 'tokens/ds_motion_curves.dart';
+export 'components/ds_feedback/ds_confirm_dialog.dart';
+export 'components/ds_feedback/ds_error_banner.dart';
+export 'components/ds_feedback/ds_state_view.dart';
+export 'components/ds_layout/ds_detail_row.dart';
+export 'components/ds_layout/ds_fab.dart';
+export 'components/ds_layout/ds_gap.dart';
+export 'components/ds_layout/ds_logo_mark.dart';
+export 'components/ds_layout/ds_scaffold.dart';
+export 'components/ds_layout/ds_section_header.dart';
+export 'components/ds_navigation_bar/ds_navigation_bar.dart';
+export 'components/ds_profile/ds_avatar.dart';
+export 'components/ds_profile/ds_profile_header.dart';
+export 'components/ds_status_pill/ds_status_pill.dart';
+export 'components/ds_text_field/ds_password_field.dart';
+export 'components/ds_text_field/ds_text_field.dart';
+export 'components/ds_transaction/ds_balance_card.dart';
+export 'components/ds_transaction/ds_money_text.dart';
+export 'components/ds_transaction/ds_transaction_kind.dart';
+export 'components/ds_transaction/ds_transaction_kind_selector.dart';
+export 'components/ds_transaction/ds_transaction_tile.dart';
+export 'screens/ds_sample_screen.dart';
+export 'theme/ds_theme.dart';
+export 'tokens/ds_colors.dart';
+export 'tokens/ds_spacing.dart';
+export 'tokens/ds_typography.dart';
